@@ -1,0 +1,1930 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Programa Vida y Ministerio - Gestión local</title>
+<style>
+  :root{
+    --bg:#0b0f16;--bg2:#121826;--bg3:#192233;--card:#111827;--card2:#162033;
+    --line:rgba(148,163,184,.18);--line2:rgba(99,102,241,.35);
+    --txt:#e5e7eb;--muted:#94a3b8;--muted2:#64748b;
+    --pri:#6366f1;--pri2:#8b5cf6;--ok:#22c55e;--warn:#f59e0b;--bad:#ef4444;--info:#38bdf8;
+    --radius:18px;--shadow:0 18px 50px rgba(0,0,0,.28);
+  }
+  *{box-sizing:border-box}
+  body{margin:0;background:radial-gradient(circle at 20% 0%,rgba(99,102,241,.16),transparent 32%),var(--bg);color:var(--txt);font-family:Inter,Segoe UI,system-ui,-apple-system,sans-serif;min-height:100vh}
+  button,input,select,textarea{font:inherit}
+  .login{min-height:100vh;display:grid;place-items:center;padding:24px}
+  .login-card{width:min(430px,100%);background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.02));border:1px solid var(--line2);border-radius:26px;padding:34px;box-shadow:var(--shadow)}
+  .brand{display:flex;gap:14px;align-items:center;margin-bottom:22px}
+  .logo{width:52px;height:52px;border-radius:18px;background:linear-gradient(135deg,var(--pri),var(--pri2));display:grid;place-items:center;font-weight:800;letter-spacing:.04em}
+  .brand h1{font-size:21px;line-height:1.1;margin:0}.brand p{margin:4px 0 0;color:var(--muted);font-size:13px}
+  .app{display:none;min-height:100vh}
+  .side{width:278px;background:rgba(17,24,39,.86);border-right:1px solid var(--line);backdrop-filter:blur(16px);position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;z-index:10}
+  .side-head{padding:24px 22px;border-bottom:1px solid var(--line)}
+  .side-head h2{font-size:14px;letter-spacing:.13em;text-transform:uppercase;color:#c7d2fe;margin:0}.side-head p{font-size:12px;color:var(--muted2);margin:6px 0 0}
+  .nav{padding:14px 10px;flex:1;overflow:auto}.nav-title{color:var(--muted2);text-transform:uppercase;letter-spacing:.12em;font-size:10px;font-weight:800;padding:14px 12px 7px}
+  .nav button{width:100%;display:flex;align-items:center;gap:12px;border:0;background:transparent;color:var(--muted);padding:11px 12px;border-radius:14px;cursor:pointer;text-align:left;margin:2px 0;transition:.15s}
+  .nav button:hover{background:rgba(99,102,241,.09);color:var(--txt)}.nav button.active{background:rgba(99,102,241,.18);color:#c7d2fe;font-weight:700}
+  .nav svg{width:18px;height:18px;opacity:.95}
+  .side-foot{padding:16px 18px;border-top:1px solid var(--line);display:grid;gap:10px}
+  .main{margin-left:278px;min-height:100vh}.page{display:none;padding:30px clamp(18px,3vw,38px)}.page.active{display:block}
+  .top{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:24px}.top h1{font-size:28px;margin:0 0 5px}.top p{margin:0;color:var(--muted);font-size:14px}
+  .grid{display:grid;gap:16px}.grid-2{grid-template-columns:repeat(2,minmax(0,1fr))}.grid-3{grid-template-columns:repeat(3,minmax(0,1fr))}.grid-4{grid-template-columns:repeat(4,minmax(0,1fr))}
+  .card{background:linear-gradient(180deg,rgba(255,255,255,.045),rgba(255,255,255,.018));border:1px solid var(--line);border-radius:var(--radius);box-shadow:0 10px 30px rgba(0,0,0,.15);padding:18px}
+  .card-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:14px}.card-title{font-weight:800;font-size:14px;color:#dbeafe}
+  .stat{padding:18px;border-radius:20px;background:rgba(255,255,255,.035);border:1px solid var(--line)}.stat small{display:block;color:var(--muted2);font-size:11px;text-transform:uppercase;letter-spacing:.1em;font-weight:800}.stat b{display:block;font-size:30px;margin-top:8px}.stat span{font-size:12px;color:var(--muted)}
+  .btn{border:0;border-radius:13px;padding:9px 14px;font-weight:800;font-size:13px;display:inline-flex;align-items:center;gap:8px;cursor:pointer;transition:.15s;text-decoration:none}
+  .btn:hover{transform:translateY(-1px)}.btn-primary{background:linear-gradient(135deg,var(--pri),var(--pri2));color:white}.btn-sec{background:rgba(255,255,255,.06);color:var(--txt);border:1px solid var(--line)}.btn-ok{background:rgba(34,197,94,.14);color:#86efac;border:1px solid rgba(34,197,94,.25)}.btn-bad{background:rgba(239,68,68,.14);color:#fca5a5;border:1px solid rgba(239,68,68,.25)}.btn-warn{background:rgba(245,158,11,.14);color:#fcd34d;border:1px solid rgba(245,158,11,.25)}
+  .btn-sm{padding:6px 10px;font-size:12px;border-radius:10px}.icon-btn{width:36px;height:36px;padding:0;display:grid;place-items:center}
+  label{display:block;color:var(--muted);font-size:12px;text-transform:uppercase;letter-spacing:.08em;font-weight:800;margin:0 0 6px}
+  input,select,textarea{width:100%;background:#0f172a;border:1px solid var(--line);border-radius:13px;color:var(--txt);padding:10px 12px;outline:0}
+  textarea{min-height:96px;resize:vertical}input:focus,select:focus,textarea:focus{border-color:var(--pri);box-shadow:0 0 0 3px rgba(99,102,241,.12)}
+  .form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}.form-row-3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:12px}.field{margin-bottom:14px}
+  table{width:100%;border-collapse:collapse}th,td{padding:11px 12px;border-bottom:1px solid rgba(148,163,184,.12);font-size:13px;vertical-align:middle}th{text-align:left;color:var(--muted2);font-size:11px;text-transform:uppercase;letter-spacing:.08em}tr:hover td{background:rgba(255,255,255,.015)}
+  .badge{display:inline-flex;align-items:center;gap:5px;padding:4px 8px;border-radius:999px;font-size:11px;font-weight:800;white-space:nowrap}.b-pri{background:rgba(99,102,241,.16);color:#c7d2fe}.b-ok{background:rgba(34,197,94,.14);color:#86efac}.b-warn{background:rgba(245,158,11,.14);color:#fde68a}.b-bad{background:rgba(239,68,68,.14);color:#fecaca}.b-info{background:rgba(56,189,248,.14);color:#bae6fd}.b-gray{background:rgba(148,163,184,.12);color:#cbd5e1}.b-purple{background:rgba(139,92,246,.16);color:#ddd6fe}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}.chip{border:1px solid var(--line);background:#0f172a;color:var(--muted);border-radius:999px;padding:7px 10px;font-size:12px;font-weight:800;cursor:pointer}.chip.active{background:rgba(99,102,241,.18);border-color:var(--pri);color:#c7d2fe}.chip.disabled{opacity:.35;cursor:not-allowed}
+  .toolbar{display:flex;gap:10px;flex-wrap:wrap;align-items:center}.monthbar{display:flex;align-items:center;gap:10px;margin:0 0 18px}.monthbar h2{font-size:19px;margin:0;min-width:170px;text-align:center}
+  .weekpager{display:flex;align-items:center;justify-content:space-between;gap:14px;margin:0 0 18px;padding:14px 16px;border:1px solid var(--line);background:linear-gradient(180deg,rgba(255,255,255,.055),rgba(255,255,255,.025));border-radius:18px}
+  .weekpager-main{text-align:center;flex:1}.weekpager-main b{display:block;font-size:18px;color:#f8fafc}.weekpager-main span{display:block;margin-top:4px;font-size:13px;color:var(--muted)}
+  .weekpager .icon-btn{width:44px;height:44px;font-size:26px;border-radius:14px;justify-content:center}.week-count{font-size:12px;color:var(--muted2);font-weight:800;letter-spacing:.08em;text-transform:uppercase}
+  .week{overflow:hidden;padding:0}.week-head{background:rgba(99,102,241,.11);border-bottom:1px solid var(--line);padding:20px 22px;display:flex;align-items:flex-start;justify-content:space-between;gap:14px}.week-head h3{margin:0;font-size:19px;color:#c7d2fe}.week-head p{margin:7px 0 0;color:var(--muted);font-size:14px;line-height:1.45}.week-actions{display:flex;gap:8px;align-items:center;flex-wrap:wrap;justify-content:flex-end}
+  .section{border-bottom:1px solid rgba(148,163,184,.1);padding:18px 22px}.section:last-child{border-bottom:0}.section h4{margin:0 0 12px;font-size:13px;text-transform:uppercase;letter-spacing:.12em;color:var(--muted2)}
+  .part{display:grid;grid-template-columns:40px 1fr auto;gap:13px;align-items:start;padding:10px 0}.num{width:31px;height:31px;border-radius:50%;display:grid;place-items:center;background:#0f172a;color:#a5b4fc;font-weight:900;font-size:13px;border:1px solid var(--line)}.part-title{font-size:15px;font-weight:800;line-height:1.35}.part-meta{font-size:13px;color:var(--muted);margin-top:4px;line-height:1.35}.assignee{font-size:15px;margin-top:7px;color:#e2e8f0}.empty{font-style:italic;color:var(--muted2)}.helper{color:#a7f3d0}
+  .notice{padding:12px 14px;border:1px solid rgba(56,189,248,.26);background:rgba(56,189,248,.08);border-radius:14px;color:#bae6fd;font-size:13px}.notice.warn{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08);color:#fde68a}.notice.bad{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08);color:#fecaca}
+  .program-alerts{display:grid;gap:10px;margin:0 0 18px}.program-alerts .alert-card{padding:14px;border-radius:16px;border:1px solid var(--line);background:rgba(255,255,255,.035)}.program-alerts h3{margin:0 0 8px;font-size:14px;color:#f8fafc}.program-alerts ul{margin:8px 0 0;padding-left:18px}.program-alerts li{margin:5px 0;color:#dbeafe;font-size:13px;line-height:1.35}.program-alerts .ok-line{border-color:rgba(34,197,94,.25);background:rgba(34,197,94,.08);color:#bbf7d0}.program-alerts .warn-line{border-color:rgba(245,158,11,.3);background:rgba(245,158,11,.08)}.program-alerts .bad-line{border-color:rgba(239,68,68,.3);background:rgba(239,68,68,.08)}
+  .empty-state{text-align:center;color:var(--muted2);padding:44px 20px}.empty-state b{display:block;color:var(--txt);font-size:16px;margin-bottom:6px}
+  .modal-wrap{position:fixed;inset:0;background:rgba(2,6,23,.76);backdrop-filter:blur(8px);display:none;align-items:center;justify-content:center;z-index:50;padding:20px}.modal-wrap.open{display:flex}.modal{width:min(760px,96vw);max-height:92vh;overflow:auto;background:#101827;border:1px solid var(--line2);border-radius:24px;box-shadow:var(--shadow);padding:24px}.modal.big{width:min(980px,96vw)}.modal-head{display:flex;justify-content:space-between;gap:12px;align-items:center;margin-bottom:18px}.modal-head h3{margin:0;font-size:18px}.modal-foot{display:flex;justify-content:flex-end;gap:10px;margin-top:18px;padding-top:14px;border-top:1px solid var(--line)}
+  .modal.preview{width:min(1120px,98vw);padding:18px}.preview-frame{width:100%;height:min(76vh,820px);border:1px solid var(--line);border-radius:16px;background:#e5e7eb}
+  .toast{position:fixed;right:20px;bottom:20px;z-index:80;padding:12px 16px;border-radius:16px;background:#111827;border:1px solid var(--line2);box-shadow:var(--shadow);color:#dbeafe;transform:translateY(20px);opacity:0;pointer-events:none;transition:.2s;font-size:13px;font-weight:800}.toast.show{transform:translateY(0);opacity:1}
+  .progress{height:7px;background:#0f172a;border-radius:999px;overflow:hidden}.progress span{display:block;height:100%;background:linear-gradient(90deg,var(--pri),var(--pri2))}
+  .special-pill{display:inline-flex;align-items:center;gap:6px;margin-top:8px;padding:6px 10px;border-radius:999px;background:rgba(245,158,11,.13);border:1px solid rgba(245,158,11,.32);color:#fde68a;font-size:12px;font-weight:900}
+  .s89-list{display:grid;gap:10px}.s89-item{display:grid;grid-template-columns:1fr auto;gap:12px;align-items:center;border:1px solid var(--line);border-radius:16px;padding:12px;background:rgba(255,255,255,.035)}.s89-item b{display:block;font-size:13px}.s89-item span{display:block;color:var(--muted);font-size:12px;margin-top:3px}
+  .student-profile{display:grid;gap:14px}.profile-head{display:flex;justify-content:space-between;gap:16px;align-items:flex-start;flex-wrap:wrap}.profile-head h4{margin:0;font-size:20px}.profile-head p{margin:5px 0 0;color:var(--muted);font-size:13px}.profile-notes{white-space:pre-wrap;color:var(--muted);font-size:13px;line-height:1.45}
+  .print-area{display:none}
+  .mobile-menu{display:none}
+  @media(max-width:960px){.side{transform:translateX(-100%);transition:.2s}.side.open{transform:translateX(0)}.main{margin-left:0}.mobile-menu{display:inline-flex}.grid-4,.grid-3,.grid-2{grid-template-columns:1fr}.top{flex-direction:column}.form-row,.form-row-3{grid-template-columns:1fr}.part{grid-template-columns:30px 1fr}.part .toolbar{grid-column:2}}
+  @media print{
+    @page{size:A4 portrait;margin:8mm}
+    *{-webkit-print-color-adjust:exact!important;print-color-adjust:exact!important}
+    html,body{background:#fff!important;color:#102033!important;margin:0!important;padding:0!important}
+    .app,.login,.toast,.modal-wrap{display:none!important}
+    .print-area{display:block!important;color:#102033;font-family:"Aptos","Segoe UI",Arial,Helvetica,sans-serif;padding:0;background:#fff}
+    .program-page{page-break-after:always;break-after:page;max-width:194mm;margin:0 auto;background:#fff}
+    .program-page:last-child{page-break-after:auto;break-after:auto}
+
+    .model-head{display:grid;grid-template-columns:1fr 1.15fr 1fr;align-items:center;gap:8px;margin:0 0 10px;padding:8px 10px 10px;border-bottom:3px solid #153a69;background:linear-gradient(90deg,#f7fbff 0%,#eef6ff 55%,#ffffff 100%)}
+    .model-head h1{grid-column:1/4;text-align:center;color:#0b2f5f;font-size:23px;letter-spacing:.08em;margin:0 0 7px;font-weight:900;line-height:1.05}
+    .model-month{font-size:18px;color:#0b2f5f;font-weight:900;background:#e8f2ff;border:1px solid #c9def5;border-radius:8px;padding:5px 10px;width:max-content}
+    .model-cong{font-size:15px;color:#0b2f5f;text-align:center;font-weight:700}.model-cong span{display:inline-block;min-width:110px;border-bottom:1px solid #8aa8c8;color:#243b53;font-weight:600}
+    .model-brand-mini{font-size:9px;color:#6b7f95;text-align:right;text-transform:uppercase;letter-spacing:.08em}
+    .model-spacer{height:5px}
+
+    .model-week{border:1px solid #b7c9dc;margin-bottom:12px;break-inside:avoid;border-radius:10px;overflow:hidden;box-shadow:0 2px 7px rgba(15,48,90,.08)}
+    .model-week-top{display:grid;grid-template-columns:1.1fr .9fr;background:#f2f7fc;border-bottom:1px solid #c9d8e8;font-size:11.5px;min-height:24px;color:#183b5b}
+    .model-week-title{font-weight:900;padding:6px 8px;letter-spacing:.02em}.model-week-title::before{content:"";display:inline-block;width:7px;height:7px;border-radius:50%;background:#0b7f78;margin-right:6px;vertical-align:1px}
+    .model-reading{padding:6px 8px;border-left:1px solid #c9d8e8;font-size:11px;color:#243b53}.model-reading b{color:#0b2f5f}
+
+    .model-opening{display:grid;grid-template-columns:1fr 1fr;background:#fbfdff;border-bottom:1px solid #c9d8e8;font-size:11.5px;min-height:25px;color:#102033}
+    .model-opening div{padding:5px 8px}.model-opening div+div{border-left:1px solid #d7e3ef}
+    .role-line{display:inline-block;border:1px solid #9bb7d3;background:#fff;min-width:126px;min-height:18px;vertical-align:middle;margin-left:5px;padding:2px 6px;border-radius:5px;color:#0f172a;font-weight:600}
+
+    .model-bar{color:#fff;text-align:center;font-weight:900;font-size:10.8px;letter-spacing:.08em;line-height:20px;height:20px;text-transform:uppercase}
+    .bar-tesoros{background:linear-gradient(90deg,#006b68,#08958d)}
+    .bar-smm{background:linear-gradient(90deg,#99600b,#d28a13)}
+    .bar-nvc{background:linear-gradient(90deg,#8e0f1a,#c42132)}
+
+    .model-row{display:grid;grid-template-columns:1fr 42mm;border-top:1px solid #d7e3ef;min-height:23px;background:#fff}
+    .model-row:nth-of-type(even){background:#fbfdff}
+    .model-row:first-child{border-top:0}
+    .model-topic{padding:5px 8px;font-size:11.2px;color:#075f3b;font-weight:900;line-height:1.25}
+    .model-topic small{font-weight:500;color:#075f3b;margin-left:2px}
+    .model-name{border-left:1px solid #d7e3ef;padding:5px 7px;font-size:11.2px;display:flex;align-items:center;justify-content:flex-start;color:#102033;background:#ffffff;font-weight:600}
+    .model-helper{display:grid;grid-template-columns:1fr 42mm;border-top:1px dashed #c7d7e8;min-height:20px;background:#f7fafc}
+    .model-helper-label{padding:4px 8px;text-align:right;font-size:9.8px;color:#5b6b7c;font-weight:700}
+    .model-helper-name{border-left:1px solid #d7e3ef;padding:4px 7px;font-size:10.5px;color:#102033;background:#fff}
+    .model-song{font-size:11.2px;color:#075f3b;padding:5px 8px;min-height:22px;border-top:1px solid #d7e3ef;background:#f8fbf8;font-weight:700}
+    .model-footer{display:grid;grid-template-columns:1fr 1fr;border-top:1px solid #c9d8e8;min-height:25px;font-size:11.2px;color:#a11220;background:#fff8f8}
+    .model-footer div{padding:5px 8px}.model-footer div+div{border-left:1px solid #d7e3ef}
+    .model-special{background:#fff7ed;border-top:1px solid #f4c27a;border-bottom:1px solid #f4c27a;color:#9a3412;text-align:center;font-weight:900;letter-spacing:.04em;padding:5px 8px;font-size:11px;text-transform:uppercase}
+    .s89-page{page-break-after:always;break-after:page;width:194mm;min-height:281mm;margin:0 auto;background:#fff;display:flex;align-items:flex-start;justify-content:center;padding-top:12mm}
+    .s89-page:last-child{page-break-after:auto;break-after:auto}
+    .s89-card{width:174mm;min-height:116mm;border:1px solid #d6dce4;box-shadow:0 0 0 1px #f0f2f5 inset;padding:9mm 10mm;color:#111827;font-family:Arial,Helvetica,sans-serif;background:#fff}
+    .s89-title{text-align:center;font-weight:900;font-size:15px;letter-spacing:.035em;line-height:1.2;margin:0 0 9mm}
+    .s89-field{display:grid;grid-template-columns:34mm 1fr;align-items:end;margin:0 0 5mm;font-size:13.2px}
+    .s89-field b{font-size:13.2px}.s89-value{min-height:18px;border-bottom:1px dotted #c9cdd3;padding:0 3mm 2px;font-weight:700}
+    .s89-inter{display:grid;grid-template-columns:40mm 1fr;margin:0 0 6mm;font-size:13px;align-items:start}.s89-inter b{font-size:13px}.s89-inter-text{font-size:12.2px;line-height:1.25;font-weight:700}
+    .s89-check-title{font-weight:900;font-size:13px;margin:0 0 3mm}.s89-check{display:grid;grid-template-columns:6mm 1fr;gap:2mm;align-items:center;margin:1.8mm 0 0 12mm;font-size:12.5px}.s89-box{width:4.2mm;height:4.2mm;border:1px solid #7b8794;display:inline-flex;align-items:center;justify-content:center;font-size:12px;line-height:1}.s89-note{font-size:10.6px;line-height:1.25;margin-top:7mm;text-align:justify}.s89-note b{font-weight:900}.s89-code{font-size:9px;margin-top:2mm}
+    .model-muted{font-weight:500;font-size:10px;color:#b32632}.model-blank{color:#94a3b8;font-weight:400}.no-print{display:none!important}
+  }
+</style>
+</head>
+<body>
+<div id="login" class="login" style="display:none">
+  <div class="login-card">
+    <div class="brand">
+      <div class="logo">VYM</div>
+      <div>
+        <h1>Programa Vida y Ministerio</h1>
+        <p>Gestión local para asignaciones semanales</p>
+      </div>
+    </div>
+    <div class="notice warn" style="margin-bottom:16px">Acceso solo para administrador.</div>
+    <div class="field"><label>Usuario</label><input id="loginUser" autocomplete="username" value="admin"></div>
+    <div class="field"><label>Contraseña</label><input id="loginPass" type="password" autocomplete="current-password" value="admin"></div>
+    <button class="btn btn-primary" style="width:100%;justify-content:center" onclick="login()">Ingresar</button>
+    <p style="font-size:12px;color:var(--muted2);margin:14px 0 0">Clave inicial: admin / admin. Cambiala desde Configuración.</p>
+  </div>
+</div>
+
+<div id="app" class="app" style="display:block">
+  <aside id="side" class="side">
+    <div class="side-head">
+      <h2>Vida y Ministerio</h2>
+      <p>Administrador local</p>
+    </div>
+    <nav class="nav">
+      <div class="nav-title">Principal</div>
+      <button class="active" data-page="panel" onclick="showPage('panel')">▦ <span>Panel</span></button>
+      <button data-page="programa" onclick="showPage('programa')">▣ <span>Programa mensual</span></button>
+      <button data-page="estudiantes" onclick="showPage('estudiantes')">● <span>Estudiantes</span></button>
+      <button data-page="importar" onclick="showPage('importar')">↥ <span>Importar PDF</span></button>
+      <button data-page="reportes" onclick="showPage('reportes')">▤ <span>Reportes</span></button>
+      <div class="nav-title">Sistema</div>
+      <button data-page="config" onclick="showPage('config')">⚙ <span>Configuración</span></button>
+    </nav>
+    <div class="side-foot">
+      <button class="btn btn-sec" onclick="backupJSON()">Exportar respaldo</button>
+      <button class="btn btn-sec" onclick="logout()">Cerrar sesión</button>
+    </div>
+  </aside>
+
+  <main class="main">
+    <section id="page-panel" class="page active">
+      <div class="top">
+        <div>
+          <h1>Panel de control</h1>
+          <p>Resumen de estudiantes, semanas y tareas pendientes.</p>
+        </div>
+        <button class="btn btn-sec mobile-menu" onclick="toggleSide()">Menú</button>
+      </div>
+      <div id="stats" class="grid grid-4"></div>
+      <div class="grid grid-2" style="margin-top:16px">
+        <div class="card">
+          <div class="card-head"><span class="card-title">Próximas semanas</span><button class="btn btn-primary btn-sm" onclick="showPage('programa')">Ver programa</button></div>
+          <div id="nextWeeks"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Alertas útiles</span></div>
+          <div id="alerts"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="page-programa" class="page">
+      <div class="top">
+        <div>
+          <h1>Programa mensual</h1>
+          <p>Generá, revisá, ajustá, imprimí o guardá el programa del mes.</p>
+        </div>
+        <div class="toolbar">
+          <button class="btn btn-sec mobile-menu" onclick="toggleSide()">Menú</button>
+          <button class="btn btn-ok" onclick="generateMonthAssignments()">Generar asignaciones</button>
+          <button class="btn btn-sec" onclick="backupCurrentMonth()">Backup del mes</button>
+          <button class="btn btn-sec" onclick="document.getElementById('restoreMonthFile').click()">Recuperar mes</button>
+          <input id="restoreMonthFile" type="file" accept="application/json" style="display:none" onchange="restoreMonthBackup(this)">
+          <button class="btn btn-sec" onclick="previewMonth()">Previsualizar</button>
+          <button class="btn btn-sec" onclick="printMonthClean()">Imprimir / Descargar PDF limpio</button>
+          <button class="btn btn-primary" onclick="showPage('importar')">Actualizar temas</button>
+        </div>
+      </div>
+      <div class="notice" style="margin-bottom:16px">Para que el PDF salga limpio, al imprimir desactivá <b>Encabezados y pies de página</b> si el navegador muestra fecha, hora o título arriba. También podés hacer un <b>backup solo del mes visible</b> y recuperarlo más adelante.</div>
+      <div class="monthbar">
+        <button class="btn btn-sec icon-btn" onclick="moveMonth(-1)">‹</button>
+        <h2 id="monthLabel"></h2>
+        <button class="btn btn-sec icon-btn" onclick="moveMonth(1)">›</button>
+        <button class="btn btn-sec btn-sm" onclick="goToday()">Hoy</button>
+      </div>
+      <div id="monthAlerts"></div>
+      <div id="weeks" class="grid"></div>
+    </section>
+
+    <section id="page-estudiantes" class="page">
+      <div class="top">
+        <div><h1>Estudiantes</h1><p>Registro de nombre, apellido, sexo y privilegios permitidos.</p></div>
+        <div class="toolbar">
+          <button class="btn btn-sec mobile-menu" onclick="toggleSide()">Menú</button>
+          <button class="btn btn-sec" onclick="backupStudentsJSON()">Backup estudiantes</button>
+          <button class="btn btn-sec" onclick="document.getElementById('restoreStudentsFile').click()">Recuperar estudiantes</button>
+          <input id="restoreStudentsFile" type="file" accept="application/json" style="display:none" onchange="restoreStudentsJSON(this)">
+          <button class="btn btn-primary" onclick="openStudent()">Nuevo estudiante</button>
+        </div>
+      </div>
+      <div class="card">
+        <div class="form-row-3">
+          <div><label>Buscar</label><input id="studentSearch" placeholder="Nombre o apellido" oninput="renderStudents()"></div>
+          <div><label>Sexo</label><select id="studentSexFilter" onchange="renderStudents()"><option value="">Todos</option><option value="M">Masculino</option><option value="F">Femenino</option></select></div>
+          <div><label>Privilegio</label><select id="studentPrivFilter" onchange="renderStudents()"></select></div>
+        </div>
+      </div>
+      <div class="card" style="padding:0;overflow:auto;margin-top:16px">
+        <table>
+          <thead><tr><th>Estudiante</th><th>Sexo</th><th>Privilegios</th><th>Asignaciones</th><th>Última parte</th><th>Acciones</th></tr></thead>
+          <tbody id="studentsBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="page-importar" class="page">
+      <div class="top">
+        <div><h1>Actualizar temas del mes</h1><p>Importá una guía PDF o pegá el texto. Después podés editar cada semana manualmente.</p></div>
+        <button class="btn btn-sec mobile-menu" onclick="toggleSide()">Menú</button>
+      </div>
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><span class="card-title">Importar archivo</span></div>
+          <div class="notice">La app intenta leer el PDF en el navegador. Si el navegador no permite la lectura o no hay internet para cargar el lector PDF, usá la opción “pegar texto” o cargá los temas manualmente.</div>
+          <div class="field" style="margin-top:14px"><label>Archivo RTF, TXT o PDF</label><input type="file" id="pdfFile" multiple accept=".rtf,.txt,.pdf,application/rtf,text/rtf,text/plain,application/pdf"></div>
+          <button class="btn btn-primary" onclick="importPdf()">Leer archivo y crear semanas</button>
+          <div id="pdfStatus" style="margin-top:12px;color:var(--muted);font-size:13px"></div>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Pegar texto extraído</span></div>
+          <div class="field"><label>Año del programa</label><input id="pasteYear" type="number" min="2020" max="2100" value="2026"></div>
+          <div class="field"><label>Texto</label><textarea id="programText" style="min-height:220px" placeholder="Pegá acá el texto de la guía..."></textarea></div>
+          <button class="btn btn-primary" onclick="importText()">Importar texto</button>
+        </div>
+      </div>
+      <div class="card" style="margin-top:16px">
+        <div class="card-head"><span class="card-title">Carga manual rápida</span></div>
+        <div class="form-row-3">
+          <div><label>Semana desde</label><input id="manualStart" type="date"></div>
+          <div><label>Semana hasta</label><input id="manualEnd" type="date"></div>
+          <div><label>Lectura semanal</label><input id="manualReading" placeholder="Ej.: Jeremías 1-3"></div>
+        </div>
+        <button class="btn btn-sec" onclick="createBlankWeek()">Crear semana editable</button>
+      </div>
+    </section>
+
+    <section id="page-reportes" class="page">
+      <div class="top">
+        <div><h1>Reportes</h1><p>Seguimiento de participación, finalización y equilibrio de asignaciones.</p></div>
+        <div class="toolbar"><button class="btn btn-sec mobile-menu" onclick="toggleSide()">Menú</button><button class="btn btn-sec" onclick="exportReportCSV()">Exportar CSV</button></div>
+      </div>
+      <div class="grid grid-2">
+        <div class="card"><div class="card-head"><span class="card-title">Participación por estudiante</span></div><div id="reportParticipation"></div></div>
+        <div class="card"><div class="card-head"><span class="card-title">Distribución por sección</span></div><div id="reportSections"></div></div>
+      </div>
+      <div class="card" style="margin-top:16px;padding:0;overflow:auto">
+        <table>
+          <thead><tr><th>Semana</th><th>Parte</th><th>Sección</th><th>Asignado</th><th>Lector EBC</th><th>Ayudante</th><th>Estado</th></tr></thead>
+          <tbody id="assignmentBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <section id="page-config" class="page">
+      <div class="top">
+        <div><h1>Configuración</h1><p>Datos de congregación, día de reunión y reglas de asignación.</p></div>
+        <button class="btn btn-sec mobile-menu" onclick="toggleSide()">Menú</button>
+      </div>
+      <div class="grid grid-2">
+        <div class="card">
+          <div class="card-head"><span class="card-title">Datos generales</span></div>
+          <div class="field"><label>Congregación</label><input id="cfgCong"></div>
+          <div class="field"><label>Ciudad</label><input id="cfgCity"></div>
+          <div class="form-row">
+            <div><label>Día de reunión</label><select id="cfgDay"><option value="1">Lunes</option><option value="2">Martes</option><option value="3">Miércoles</option><option value="4">Jueves</option><option value="5">Viernes</option><option value="6">Sábado</option><option value="0">Domingo</option></select></div>
+            <div><label>Hora</label><input id="cfgTime" type="time"></div>
+          </div>
+          <button class="btn btn-primary" onclick="saveConfig()">Guardar configuración</button>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Reglas</span></div>
+          <div class="field"><label>Semanas mínimas entre partes</label><input id="cfgMinWeeks" type="number" min="0" max="12"></div>
+          <div class="field"><label>Máximo de partes por estudiante al mes</label><input id="cfgMaxMonth" type="number" min="1" max="8"></div>
+          <div class="field"><label>Sala auxiliar</label><select id="cfgAux"><option value="0">No</option><option value="1">Sí</option></select></div>
+          <div class="field"><label>Agregar ayudante automáticamente en temas 4 al 6 y en “Explique sus creencias”, excepto cuando el tema sea discurso</label><select id="cfgHelpers"><option value="1">Sí</option><option value="0">No</option></select></div>
+          <button class="btn btn-primary" onclick="saveConfig()">Guardar reglas</button>
+        </div>
+      </div>
+      <div class="grid grid-2" style="margin-top:16px">
+        <div class="card">
+          <div class="card-head"><span class="card-title">Seguridad local</span></div>
+          <div class="form-row">
+            <div><label>Usuario admin</label><input id="cfgUser"></div>
+            <div><label>Nueva contraseña</label><input id="cfgPass" type="password" placeholder="Dejar vacío para no cambiar"></div>
+          </div>
+          <button class="btn btn-primary" onclick="saveCredentials()">Guardar acceso</button>
+        </div>
+        <div class="card">
+          <div class="card-head"><span class="card-title">Importar / restaurar</span></div>
+          <div class="toolbar">
+            <button class="btn btn-sec" onclick="backupJSON()">Exportar respaldo JSON</button>
+            <button class="btn btn-sec" onclick="backupStudentsJSON()">Backup estudiantes</button>
+            <button class="btn btn-sec" onclick="document.getElementById('restoreFile').click()">Importar respaldo</button>
+            <input id="restoreFile" type="file" accept="application/json" style="display:none" onchange="restoreJSON(this)">
+          </div>
+          <div class="notice bad" style="margin-top:14px">Restaurar reemplaza la base local actual.</div>
+        </div>
+      </div>
+    </section>
+  </main>
+</div>
+
+<div id="studentModal" class="modal-wrap">
+  <div class="modal">
+    <div class="modal-head"><h3 id="studentModalTitle">Estudiante</h3><button class="btn btn-sec btn-sm" onclick="closeModal('studentModal')">Cerrar</button></div>
+    <input id="studentId" type="hidden">
+    <div class="form-row">
+      <div class="field"><label>Nombre</label><input id="stName"></div>
+      <div class="field"><label>Apellido</label><input id="stLast"></div>
+    </div>
+    <div class="form-row">
+      <div class="field"><label>Sexo</label><select id="stSex" onchange="renderPrivChips()"><option value="M">Masculino</option><option value="F">Femenino</option></select></div>
+      <div class="field"><label>Estado</label><select id="stStatus"><option value="activo">Activo</option><option value="inactivo">Inactivo</option></select></div>
+    </div>
+    <div class="field"><label>Privilegios</label><div id="privChips" class="chips"></div></div>
+    <div class="notice warn">Regla aplicada: las mujeres solo quedan disponibles para la sección “Seamos mejores maestros” y como ayudantes en esa misma sección.</div>
+    <div class="field" style="margin-top:14px"><label>Notas</label><textarea id="stNotes"></textarea></div>
+    <div class="modal-foot"><button class="btn btn-sec" onclick="closeModal('studentModal')">Cancelar</button><button class="btn btn-primary" onclick="saveStudent()">Guardar</button></div>
+  </div>
+</div>
+
+<div id="studentProfileModal" class="modal-wrap">
+  <div class="modal big">
+    <div class="modal-head"><h3 id="studentProfileTitle">Ficha del estudiante</h3><button class="btn btn-sec btn-sm" onclick="closeModal('studentProfileModal')">Cerrar</button></div>
+    <div id="studentProfileContent"></div>
+  </div>
+</div>
+
+<div id="assignModal" class="modal-wrap">
+  <div class="modal">
+    <div class="modal-head"><h3 id="assignTitle">Editar asignación</h3><button class="btn btn-sec btn-sm" onclick="closeModal('assignModal')">Cerrar</button></div>
+    <div id="assignContent"></div>
+    <div class="modal-foot"><button class="btn btn-sec" onclick="closeModal('assignModal')">Cancelar</button><button class="btn btn-primary" onclick="saveAssignment()">Guardar</button></div>
+  </div>
+</div>
+
+<div id="weekModal" class="modal-wrap">
+  <div class="modal big">
+    <div class="modal-head"><h3 id="weekTitle">Editar semana</h3><button class="btn btn-sec btn-sm" onclick="closeModal('weekModal')">Cerrar</button></div>
+    <div id="weekContent"></div>
+    <div class="modal-foot"><button class="btn btn-bad" onclick="deleteEditingWeek()">Eliminar semana</button><button class="btn btn-sec" onclick="closeModal('weekModal')">Cancelar</button><button class="btn btn-primary" onclick="saveWeekEdit()">Guardar</button></div>
+  </div>
+</div>
+
+<div id="s89Modal" class="modal-wrap">
+  <div class="modal big">
+    <div class="modal-head"><h3 id="s89Title">Hojas S-89</h3><button class="btn btn-sec btn-sm" onclick="closeModal('s89Modal')">Cerrar</button></div>
+    <div class="notice" style="margin-bottom:14px">Se genera una hoja individual por estudiante, tomando como modelo la S-89: nombre, ayudante, fecha, intervención y sala. Para descargarla, elegí “Guardar como PDF” en la ventana de impresión.</div>
+    <div id="s89Content"></div>
+  </div>
+</div>
+
+<div id="previewModal" class="modal-wrap">
+  <div class="modal preview">
+    <div class="modal-head">
+      <h3>Previsualización del programa</h3>
+      <div class="toolbar">
+        <button class="btn btn-sec btn-sm" onclick="printMonthClean()">Imprimir / PDF</button>
+        <button class="btn btn-sec btn-sm" onclick="closeModal('previewModal')">Cerrar</button>
+      </div>
+    </div>
+    <iframe id="previewFrame" class="preview-frame" title="Previsualización del programa mensual"></iframe>
+  </div>
+</div>
+
+<div id="toast" class="toast"></div>
+<div id="printArea" class="print-area"></div>
+
+{{ initial_state|json_script:"initial-state" }}
+<script>
+const DB_KEY='vym_local_admin_app_v3';
+const MONTHS=['Enero','Febrero','Marzo','Abril','Mayo','Junio','Julio','Agosto','Septiembre','Octubre','Noviembre','Diciembre'];
+const MONTHS_UP={ENERO:0,FEBRERO:1,MARZO:2,ABRIL:3,MAYO:4,JUNIO:5,JULIO:6,AGOSTO:7,SEPTIEMBRE:8,OCTUBRE:9,NOVIEMBRE:10,DICIEMBRE:11};
+const SPECIAL_EVENTS={none:'Sin evento especial',visita:'Visita del Super.',asamblea_circuito:'Asamblea de circuito',asamblea_regional:'Asamblea Regional',otro:'Otro evento especial'};
+const PRIVS=[
+  {id:'anciano_siervo',label:'Anciano o siervo ministerial',sections:['smm'],menOnly:true},
+  {id:'oracion',label:'Oración',sections:['apertura','cierre'],menOnly:true},
+  {id:'presidente',label:'Presidente',sections:['apertura'],menOnly:true},
+  {id:'consejero',label:'Consejero sala aux.',sections:['apertura'],menOnly:true},
+  {id:'tesoros',label:'Discurso Tesoros',sections:['tesoros'],menOnly:true},
+  {id:'perlas',label:'Busquemos perlas',sections:['tesoros'],menOnly:true},
+  {id:'lector_biblia',label:'Lectura de la Biblia',sections:['tesoros'],menOnly:true},
+  {id:'smm',label:'Seamos mejores maestros',sections:['smm'],menOnly:false},
+  {id:'ayudante_smm',label:'Ayudante SMM',sections:['smm'],menOnly:false},
+  {id:'nvc',label:'Nuestra Vida Cristiana',sections:['nvc'],menOnly:true},
+  {id:'conductor_ebc',label:'Conductor EBC',sections:['nvc'],menOnly:true},
+  {id:'lector_ebc',label:'Lector EBC',sections:['nvc'],menOnly:true}
+];
+
+const SEED_WEEKS=[
+{ id:'seed-2026-05-04', start:'2026-05-04', end:'2026-05-10', lectura:'ISAÍAS 58, 59', openingSong:'21', nvcSong:'100', closingSong:'42', source:'PDF mayo-junio 2026',
+parts:[
+ p(1,'tesoros','Disfrute al máximo de la bendición de Jehová','10 mins.','Discurso','tesoros'),
+ p(2,'tesoros','Busquemos perlas escondidas','10 mins.','Is 59:11. Pregunta y perlas de la lectura semanal.','perlas'),
+ p(3,'tesoros','Lectura de la Biblia','4 mins.','Is 59:1-12 (th lección 10).','lector_biblia'),
+ p(4,'smm','Empiece conversaciones','3 mins.','DE CASA EN CASA. Use un tratado para empezar una conversación.','smm',true),
+ p(5,'smm','Empiece conversaciones','4 mins.','PREDICACIÓN INFORMAL. Use una verdad del apéndice A del folleto Una obra de amor.','smm',true),
+ p(6,'smm','Discurso','5 mins.','Título: Deberíamos orar con frecuencia.','smm',true),
+ p(7,'nvc','“Sean siempre hospitalarios”','15 mins.','Análisis con el auditorio.','nvc'),
+ p(8,'nvc','Estudio bíblico de la congregación','30 mins.','lfb lecciones 82, 83.','conductor_ebc')
+]},
+{ id:'seed-2026-05-11', start:'2026-05-11', end:'2026-05-17', lectura:'ISAÍAS 60, 61', openingSong:'146', nvcSong:'156', closingSong:'119', source:'PDF mayo-junio 2026',
+parts:[
+ p(1,'tesoros','“Levántate, oh, mujer, despide luz”','10 mins.','Discurso','tesoros'),
+ p(2,'tesoros','Busquemos perlas escondidas','10 mins.','Is 61:1. Pregunta y perlas de la lectura semanal.','perlas'),
+ p(3,'tesoros','Lectura de la Biblia','4 mins.','Is 61:1-9 (th lección 11).','lector_biblia'),
+ p(4,'smm','Empiece conversaciones','3 mins.','PREDICACIÓN INFORMAL. Enséñele a la persona el nombre de Dios.','smm',true),
+ p(5,'smm','Haga revisitas','4 mins.','PREDICACIÓN INFORMAL. La persona mencionó la muerte reciente de un ser querido.','smm',true),
+ p(6,'smm','Haga discípulos','5 mins.','lff lección 19 punto 5.','smm',true),
+ p(7,'nvc','Necesidades de la congregación','15 mins.','Parte local.','nvc'),
+ p(8,'nvc','Estudio bíblico de la congregación','30 mins.','lfb lecciones 84, 85.','conductor_ebc')
+]},
+{ id:'seed-2026-05-18', start:'2026-05-18', end:'2026-05-24', lectura:'ISAÍAS 62-64', openingSong:'44', nvcSong:'115', closingSong:'151', source:'PDF mayo-junio 2026',
+parts:[
+ p(1,'tesoros','El Alfarero nos moldea con amor y compasión','10 mins.','Discurso','tesoros'),
+ p(2,'tesoros','Busquemos perlas escondidas','10 mins.','Is 63:10. Pregunta y perlas de la lectura semanal.','perlas'),
+ p(3,'tesoros','Lectura de la Biblia','4 mins.','Is 64:4-12 (th lección 12).','lector_biblia'),
+ p(4,'smm','Empiece conversaciones','3 mins.','PREDICACIÓN PÚBLICA. Averigüe qué temas le interesan a la persona.','smm',true),
+ p(5,'smm','Haga revisitas','4 mins.','DE CASA EN CASA. Presente y analice un video del kit de enseñanza.','smm',true),
+ p(6,'smm','Haga discípulos','5 mins.','Meta de ser publicador no bautizado.','smm',true),
+ p(7,'nvc','Preparados para las situaciones de emergencia: Esté listo para lo imprevisto','15 mins.','Análisis con el auditorio.','nvc'),
+ p(8,'nvc','Estudio bíblico de la congregación','30 mins.','lfb lección 86, introducción a la sección 13 y lección 87.','conductor_ebc')
+]},
+{ id:'seed-2026-05-25', start:'2026-05-25', end:'2026-05-31', lectura:'ISAÍAS 65, 66', openingSong:'24', nvcSong:'80', closingSong:'55', source:'PDF mayo-junio 2026',
+parts:[
+ p(1,'tesoros','¡Cuánto amamos nuestro paraíso espiritual!','10 mins.','Discurso','tesoros'),
+ p(2,'tesoros','Busquemos perlas escondidas','10 mins.','Is 66:24. Pregunta y perlas de la lectura semanal.','perlas'),
+ p(3,'tesoros','Lectura de la Biblia','4 mins.','Is 65:17-25 (th lección 10).','lector_biblia'),
+ p(4,'smm','Empiece conversaciones','3 mins.','PREDICACIÓN INFORMAL. Busque una manera natural de identificarse como testigo de Jehová.','smm',true),
+ p(5,'smm','Empiece conversaciones','2 mins.','PREDICACIÓN PÚBLICA. La persona quiere discutir con usted.','smm',true),
+ p(6,'smm','Empiece conversaciones','3 mins.','DE CASA EN CASA. Use un tratado para empezar una conversación.','smm',true),
+ p(7,'smm','Explique sus creencias','3 mins.','Escenificación. Tema: ¿Quién es el anticristo?','smm',true),
+ p(8,'nvc','¿Tendrás tú una vida llena de cosas buenas?','15 mins.','Análisis con el auditorio.','nvc'),
+ p(9,'nvc','Estudio bíblico de la congregación','30 mins.','lfb lecciones 88, 89.','conductor_ebc')
+]},
+{ id:'seed-2026-06-01', start:'2026-06-01', end:'2026-06-07', lectura:'JEREMÍAS 1-3', openingSong:'84', nvcSong:'76', closingSong:'18', source:'PDF mayo-junio 2026',
+parts:[
+ p(1,'tesoros','“No te dejes intimidar, porque yo estoy contigo”','10 mins.','Discurso','tesoros'),
+ p(2,'tesoros','Busquemos perlas escondidas','10 mins.','Jer 2:28. Pregunta y perlas de la lectura semanal.','perlas'),
+ p(3,'tesoros','Lectura de la Biblia','4 mins.','Jer 3:14-25 (th lección 12).','lector_biblia'),
+ p(4,'smm','Empiece conversaciones','3 mins.','DE CASA EN CASA. Empiece con un tema de actualidad y dirija a la Biblia.','smm',true),
+ p(5,'smm','Haga revisitas','4 mins.','DE CASA EN CASA. Ofrezca un curso de la Biblia.','smm',true),
+ p(6,'smm','Haga discípulos','5 mins.','Converse con alguien que estudia la Biblia pero no progresa.','smm',true),
+ p(7,'nvc','¡Sé valiente como Jeremías!','6 mins.','Análisis con el auditorio.','nvc'),
+ p(8,'nvc','“Listos para presentar una defensa con apacibilidad y profundo respeto”','9 mins.','Análisis con el auditorio.','nvc'),
+ p(9,'nvc','Estudio bíblico de la congregación','30 mins.','lfb lecciones 90, 91.','conductor_ebc')
+]},
+{ id:'seed-2026-06-08', start:'2026-06-08', end:'2026-06-14', lectura:'JEREMÍAS 4-6', openingSong:'56', nvcSong:'60', closingSong:'68', source:'PDF mayo-junio 2026',
+parts:[
+ p(1,'tesoros','No nos enfermemos espiritualmente como les pasó a los de Judá','10 mins.','Discurso','tesoros'),
+ p(2,'tesoros','Busquemos perlas escondidas','10 mins.','Jer 4:10. Pregunta y perlas de la lectura semanal.','perlas'),
+ p(3,'tesoros','Lectura de la Biblia','4 mins.','Jer 5:1-11 (th lección 5).','lector_biblia'),
+ p(4,'smm','Empiece conversaciones','2 mins.','PREDICACIÓN PÚBLICA.','smm',true),
+ p(5,'smm','Empiece conversaciones','2 mins.','DE CASA EN CASA.','smm',true),
+ p(6,'smm','Haga revisitas','4 mins.','PREDICACIÓN INFORMAL. La persona no está segura de si se puede confiar en la Biblia.','smm',true),
+ p(7,'smm','Explique sus creencias','3 mins.','Escenificación. Tema: ¿De dónde proviene el nombre testigos de Jehová?','smm',true),
+ p(8,'nvc','Proteja su corazón de la información falsa','8 mins.','Análisis con el auditorio.','nvc'),
+ p(9,'nvc','Necesidades de la congregación','7 mins.','Parte local.','nvc'),
+ p(10,'nvc','Estudio bíblico de la congregación','30 mins.','lfb lecciones 92, 93.','conductor_ebc')
+]},
+{ id:'seed-2026-06-15', start:'2026-06-15', end:'2026-06-21', lectura:'JEREMÍAS 7, 8', openingSong:'152', nvcSong:'91', closingSong:'71', source:'PDF mayo-junio 2026',
+parts:[
+ p(1,'tesoros','No respetaron el templo de Jehová','10 mins.','Discurso','tesoros'),
+ p(2,'tesoros','Busquemos perlas escondidas','10 mins.','Jer 8:22. Pregunta y perlas de la lectura semanal.','perlas'),
+ p(3,'tesoros','Lectura de la Biblia','4 mins.','Jer 8:4-13 (th lección 2).','lector_biblia'),
+ p(4,'smm','Empiece conversaciones','3 mins.','PREDICACIÓN INFORMAL.','smm',true),
+ p(5,'smm','Haga revisitas','4 mins.','DE CASA EN CASA. Utilice una verdad del apéndice A del folleto Una obra de amor.','smm',true),
+ p(6,'smm','Haga discípulos','5 mins.','lff lección 19 punto 6.','smm',true),
+ p(7,'nvc','¿Cómo podemos demostrar que respetamos el Salón del Reino?','5 mins.','Análisis con el auditorio.','nvc'),
+ p(8,'nvc','Cómo usamos las donaciones: Mantenemos nuestros Salones del Reino en buen estado','10 mins.','Análisis con el auditorio.','nvc'),
+ p(9,'nvc','Estudio bíblico de la congregación','30 mins.','lfb introducción a la sección 14 y lecciones 94, 95.','conductor_ebc')
+]},
+{ id:'seed-2026-06-22', start:'2026-06-22', end:'2026-06-28', lectura:'JEREMÍAS 9, 10', openingSong:'5', nvcSong:'48', closingSong:'58', source:'PDF mayo-junio 2026',
+parts:[
+ p(1,'tesoros','¿De qué presumirá usted?','10 mins.','Discurso','tesoros'),
+ p(2,'tesoros','Busquemos perlas escondidas','10 mins.','Jer 10:21. Pregunta y perlas de la lectura semanal.','perlas'),
+ p(3,'tesoros','Lectura de la Biblia','4 mins.','Jer 9:13-24 (th lección 12).','lector_biblia'),
+ p(4,'smm','Empiece conversaciones','4 mins.','PREDICACIÓN INFORMAL.','smm',true),
+ p(5,'smm','Empiece conversaciones','4 mins.','DE CASA EN CASA.','smm',true),
+ p(6,'smm','Haga revisitas','4 mins.','PREDICACIÓN INFORMAL.','smm',true),
+ p(7,'nvc','No nos dejemos engañar, apoyemos el Reino de Dios','15 mins.','Análisis con el auditorio.','nvc'),
+ p(8,'nvc','Estudio bíblico de la congregación','30 mins.','lfb lecciones 96, 97.','conductor_ebc')
+]},
+{ id:'seed-2026-06-29', start:'2026-06-29', end:'2026-07-05', lectura:'JEREMÍAS 11, 12', openingSong:'106', nvcSong:'109', closingSong:'69', source:'PDF mayo-junio 2026',
+parts:[
+ p(1,'tesoros','Cómo “competir en una carrera contra caballos”','10 mins.','Discurso','tesoros'),
+ p(2,'tesoros','Busquemos perlas escondidas','10 mins.','Jer 12:1, 3. Pregunta y perlas de la lectura semanal.','perlas'),
+ p(3,'tesoros','Lectura de la Biblia','4 mins.','Jer 12:1-11 (th lección 2).','lector_biblia'),
+ p(4,'smm','Empiece conversaciones','3 mins.','PREDICACIÓN INFORMAL. Empiece una conversación después de que alguien haga o diga algo amable.','smm',true),
+ p(5,'smm','Haga revisitas','4 mins.','DE CASA EN CASA. La persona tiene hijos.','smm',true),
+ p(6,'smm','Discurso','5 mins.','Título: Jesús fue un gran maestro y sus consejos siempre funcionan.','smm',true),
+ p(7,'nvc','Necesidades de la congregación','15 mins.','Parte local.','nvc'),
+ p(8,'nvc','Estudio bíblico de la congregación','30 mins.','lfb lecciones 98, 99.','conductor_ebc')
+]}
+];
+
+function normalizePlainText(value){return String(value||'').normalize('NFD').replace(/[\u0300-\u036f]/g,'').toLowerCase()}
+function isWhatWouldYouSayPart(part){return normalizePlainText(part?.title||'').replace(/[¿?]/g,'').trim()==='que diria'}
+function isMenOnlyPrivilege(priv){return !!PRIVS.find(p=>p.id===priv)?.menOnly}
+function isExplainBeliefsPart(part){
+  if(!part || part.section!=='smm') return false;
+  const text=normalizePlainText(`${part.title||''} ${part.detail||''}`);
+  return /explique\s+sus\s+creencias/.test(text) || /explicar\s+sus\s+creencias/.test(text);
+}
+function isSmmDiscoursePart(part){
+  if(!part || part.section!=='smm') return false;
+  const title=normalizePlainText(part.title||'').trim();
+  return /^discurso(\b|[:.-])/.test(title);
+}
+function defaultHelperAllowed(part){
+  const text=normalizePlainText(`${part?.title||''} ${part?.detail||''}`);
+  return part && part.section==='smm' && !isSmmDiscoursePart(part) && ((Number(part.num)>=4 && Number(part.num)<=6) || isExplainBeliefsPart(part) || /haga discipulos|haga disc ipulos/.test(text));
+}
+function p(num,section,title,time,detail,priv,helper=false){const base={num,section,title,time,detail};return {id:'part-'+num+'-'+Math.random().toString(36).slice(2,8),num,section,title,time,detail,privReq:priv,helperAllowed:!isSmmDiscoursePart(base) && (!!helper || defaultHelperAllowed(base)),assignedId:null,helperId:null,readerId:null,done:false,attendance:'pendiente',notes:''}}
+
+function normalizeState(s){
+  if(!s.config) s.config={};
+  if(!Array.isArray(s.students)) s.students=[];
+  if(!Array.isArray(s.weeks)) s.weeks=[];
+  s.weeks.forEach(normalizeWeek);
+  return s;
+}
+function normalizeWeek(w){
+  if(!('openingPrayerId' in w)) w.openingPrayerId=null;
+  if(!('presidentId' in w)) w.presidentId=null;
+  if(!('closingPrayerId' in w)) w.closingPrayerId=null;
+  if(!('openingSong' in w)) w.openingSong='';
+  if(!('customWeekLabel' in w)) w.customWeekLabel='';
+  if(!('specialEventType' in w)) w.specialEventType='none';
+  if(!('specialEventText' in w)) w.specialEventText='';
+  if(!('specialDate' in w)) w.specialDate='';
+  if(!('nvcSong' in w)) w.nvcSong='';
+  if(!('closingSong' in w)) w.closingSong='';
+  if(!Array.isArray(w.parts)) w.parts=[];
+  w.parts.forEach(part=>{
+    repairImportedTypography(part);
+    normalizeImportedSection(part);
+    if(!('helperAllowed' in part)) part.helperAllowed=defaultHelperAllowed(part);
+    if(isSmmDiscoursePart(part)){part.helperAllowed=false; part.helperId=null}
+    if(isExplainBeliefsPart(part)) part.helperAllowed=true;
+    if(!('helperId' in part)) part.helperId=null;
+    if(!('readerId' in part)) part.readerId=null;
+    if(!('assignedId' in part)) part.assignedId=null;
+    if(!('done' in part)) part.done=false;
+    if(!('attendance' in part)) part.attendance='pendiente';
+    if(!('notes' in part)) part.notes='';
+  });
+  normalizeWeekPartOrder(w);
+  if(isNoAssignmentWeek(w)) clearWeekAssignmentData(w);
+}
+function clearWeekAssignmentData(w){
+  if(!w) return;
+  w.openingPrayerId=null;
+  w.presidentId=null;
+  w.closingPrayerId=null;
+  (w.parts||[]).forEach(p=>{p.assignedId=null;p.helperId=null;p.readerId=null;p.done=false;p.attendance='pendiente'});
+}
+function normalizeImportedSection(part){
+  if(!part || Number(part.num)<4) return;
+  if(part.section==='nvc' && looksLikeSmmImportedPart(part)){
+    part.section='smm';
+    part.privReq='smm';
+    part.helperAllowed=defaultHelperAllowed(part);
+    return;
+  }
+  if(part.section!=='smm' || Number(part.num)<7) return;
+  if(looksLikeNvcImportedPart(part)){
+    part.section='nvc';
+    if(part.privReq==='smm') part.privReq=isEbcPart(part)?'conductor_ebc':'nvc';
+    part.helperAllowed=false;
+    part.helperId=null;
+    return;
+  }
+  if(looksLikeSmmImportedPart(part)) return;
+  part.section='nvc';
+  if(part.privReq==='smm') part.privReq=isEbcPart(part)?'conductor_ebc':'nvc';
+  part.helperAllowed=false;
+  part.helperId=null;
+}
+function looksLikeSmmImportedPart(part){
+  const text=normalizePlainText(`${part.title||''} ${part.detail||''}`);
+  return /empiece conversaciones|haga revisitas|explique sus creencias|curso biblico|hacer discipulos|haga discipulos|haga disc ipulos|predicacion|de casa en casa|discurso|seamos mejores|lectores y maestros/.test(text);
+}
+function repairImportedTypography(part){
+  if(!part) return;
+  const repair=value=>String(value||'')
+    .replace(/\b¿Qu\s+e\s+dir\s+ia\?/gi,'¿Qué diría?')
+    .replace(/\b¿Qui\s+en\s+me\s+toc\s+o\?/gi,'¿Quién me tocó?')
+    .replace(/\bHaga\s+disc\s+ipulos\b/gi,'Haga discípulos')
+    .replace(/\bEstudio\s+b\s+iblico\s+de\s+la\s+(?:CONGREGACION|Congregación)\b/gi,'Estudio bíblico de la congregación')
+    .replace(/\bSEAMOS\s+siempre\s+neutrales\s+en\s+nuestro\s+corazo\s+n\b/gi,'“Seamos siempre neutrales en nuestro corazón”')
+    .replace(/\s{2,}/g,' ').trim();
+  part.title=repair(part.title);
+  part.detail=repair(part.detail);
+  const key=normalizePlainText(part.title).replace(/[“”"]/g,'');
+  if(key==='haga discipulos') part.title='Haga discípulos';
+  else if(key==='¿que diria?') part.title='¿Qué diría?';
+  else if(key==='¿quien me toco?') part.title='“¿Quién me tocó?”';
+  else if(key==='estudio biblico de la congregacion') part.title='Estudio bíblico de la congregación';
+  else if(key==='seamos siempre neutrales en nuestro corazon') part.title='“Seamos siempre neutrales en nuestro corazón”';
+  if(isWhatWouldYouSayPart(part)){
+    part.privReq='anciano_siervo';
+    part.helperAllowed=false;
+    part.helperId=null;
+  }
+}
+function looksLikeNvcImportedPart(part){
+  const text=normalizePlainText(`${part.title||''} ${part.detail||''}`);
+  return /analisis con el auditorio|nuestra vida cristiana|vida cristiana|estudio biblico de la congregacion|necesidades de la congregacion|seamos adaptables|usemos jw\.?org|jw\.?org/.test(text);
+}
+function normalizeWeekPartOrder(w){
+  if(!w || !Array.isArray(w.parts)) return;
+  const used=new Set(w.parts.map(p=>Number(p.num)||0).filter(n=>n>0 && n<=12));
+  w.parts.filter(p=>Number(p.num)>12).forEach(part=>{
+    for(let n=1;n<=12;n++){
+      if(!used.has(n)){
+        part.num=n;
+        used.add(n);
+        break;
+      }
+    }
+  });
+  w.parts.sort((a,b)=>(Number(a.num)||0)-(Number(b.num)||0));
+}
+function rolePart(w,kind){
+  const map={
+    open:{id:'role-open-'+w.id,num:0,section:'apertura',title:'Canción y oración de apertura',time:'',detail:`Canción ${w.openingSong||'—'}`,privReq:'oracion',assignedId:w.openingPrayerId||null,helperId:null,readerId:null,done:false},
+    president:{id:'role-president-'+w.id,num:0.1,section:'apertura',title:'Presidente / palabras de introducción',time:'1 min.',detail:'Palabras de introducción',privReq:'presidente',assignedId:w.presidentId||null,helperId:null,readerId:null,done:false},
+    close:{id:'role-close-'+w.id,num:99,section:'cierre',title:'Canción y oración de cierre',time:'',detail:`Canción ${w.closingSong||'—'}`,privReq:'oracion',assignedId:w.closingPrayerId||null,helperId:null,readerId:null,done:false}
+  };
+  return map[kind];
+}
+function clone(obj){return JSON.parse(JSON.stringify(obj))}
+function defaultState(){
+  return {
+    auth:{user:'admin',pass:'admin'},
+    config:{congregation:'',city:'',meetingDay:4,time:'19:00',minWeeks:3,maxMonth:2,auxRoom:0,autoHelpers:1},
+    students:[],
+    weeks:clone(SEED_WEEKS),
+    activities:[{msg:'Aplicación iniciada con el programa Mayo-Junio 2026 cargado',date:new Date().toISOString()}]
+  };
+}
+let state=loadState();
+let viewDate=new Date();
+let currentWeekIndex=0;
+if(state.weeks?.length && !state.weeks.some(w=>{
+  const d=new Date(w.start+'T12:00:00');
+  return d.getMonth()===viewDate.getMonth() && d.getFullYear()===viewDate.getFullYear();
+})) viewDate=new Date(state.weeks[0].start+'T12:00:00');
+let currentPage='panel';
+let selectedPrivs=[];
+let editingStudentId=null;
+let editingAssign=null;
+let editingWeekId=null;
+
+function loadState(){
+  try{return normalizeState(JSON.parse(document.getElementById('initial-state').textContent))}catch(e){return normalizeState(defaultState())}
+}
+function csrfToken(){return document.cookie.split('; ').find(x=>x.startsWith('csrftoken='))?.split('=')[1]||''}
+let saveChain=Promise.resolve();
+function saveState(){normalizeState(state);const snapshot=JSON.stringify(state);saveChain=saveChain.then(()=>fetch('/api/state/',{method:'PUT',headers:{'Content-Type':'application/json','X-CSRFToken':csrfToken()},body:snapshot})).then(r=>{if(!r.ok)throw new Error('No se pudo guardar')}).catch(e=>toast(e.message));return saveChain}
+function act(msg){state.activities.push({msg,date:new Date().toISOString()}); state.activities=state.activities.slice(-100); saveState()}
+function login(){
+  const u=document.getElementById('loginUser').value.trim(), p=document.getElementById('loginPass').value;
+  if(u===state.auth.user && p===state.auth.pass){sessionStorage.setItem(DB_KEY+'_session','1'); document.getElementById('login').style.display='none'; document.getElementById('app').style.display='block'; renderAll(); toast('Bienvenido');}
+  else toast('Usuario o contraseña incorrectos');
+}
+function logout(){location.href='/logout/'}
+function toggleSide(){document.getElementById('side').classList.toggle('open')}
+function showPage(page){
+  currentPage=page;
+  document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));
+  document.getElementById('page-'+page).classList.add('active');
+  document.querySelectorAll('.nav button').forEach(b=>b.classList.toggle('active',b.dataset.page===page));
+  document.getElementById('side').classList.remove('open');
+  renderCurrent();
+}
+function renderAll(){populateFilters(); renderCurrent()}
+function renderCurrent(){
+  if(currentPage==='panel') renderPanel();
+  if(currentPage==='programa') renderProgram();
+  if(currentPage==='estudiantes') renderStudents();
+  if(currentPage==='reportes') renderReports();
+  if(currentPage==='config') renderConfig();
+}
+function toast(msg){
+  const t=document.getElementById('toast'); t.textContent=msg; t.classList.add('show'); clearTimeout(window.__toast); window.__toast=setTimeout(()=>t.classList.remove('show'),2600);
+}
+function parseISO(s){const [y,m,d]=s.split('-').map(Number); return new Date(y,m-1,d)}
+function iso(d){return d.toISOString().slice(0,10)}
+function fmtDate(s){return parseISO(s).toLocaleDateString('es-AR',{weekday:'short',day:'numeric',month:'short',year:'numeric'})}
+function fmtShort(s){return parseISO(s).toLocaleDateString('es-AR',{day:'numeric',month:'short'})}
+function weekLabel(w){return `${fmtShort(w.start)} al ${fmtShort(w.end)}`}
+function weekDisplayLabel(w){return (w.customWeekLabel||'').trim() || weekLabel(w)}
+function specialEventLabel(w){
+  const type=w.specialEventType||'none';
+  if(type==='none') return '';
+  const base=type==='otro'?(w.specialEventText||SPECIAL_EVENTS.otro):(SPECIAL_EVENTS[type]||'');
+  const date=w.specialDate?fmtDate(w.specialDate):'';
+  const extra=(type!=='otro' && w.specialEventText)?w.specialEventText:'';
+  return [base,date,extra].filter(Boolean).join(' · ');
+}
+function specialEventPdfLabel(w){
+  return (w.specialEventText||'').trim() || specialEventLabel(w);
+}
+function isNoAssignmentWeek(w){
+  return ['asamblea_circuito','asamblea_regional'].includes(w?.specialEventType||'none');
+}
+function weekDateForForms(w){return (w.customWeekLabel||'').trim() || weekLabelModel(w)}
+function getMeetingDate(w){let d=parseISO(w.start); const desired=Number(state.config.meetingDay); while(d.getDay()!==desired) d.setDate(d.getDate()+1); return iso(d)}
+function monthKey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')}
+function visibleMonth(){return viewDate.getMonth();} function visibleYear(){return viewDate.getFullYear();}
+function monthWeeks(){
+  return state.weeks.filter(w=>{
+    const d=parseISO(w.start);
+    return d.getMonth()===visibleMonth() && d.getFullYear()===visibleYear();
+  }).sort((a,b)=>parseISO(a.start)-parseISO(b.start));
+}
+function allAssignments(){
+  const rows=[];
+  state.weeks.forEach(w=>{
+    if(isNoAssignmentWeek(w)) return;
+    [rolePart(w,'open'), rolePart(w,'president'), rolePart(w,'close')].forEach(part=>rows.push({week:w,part}));
+    w.parts.forEach(part=>rows.push({week:w,part}));
+  });
+  return rows.sort((a,b)=>parseISO(a.week.start)-parseISO(b.week.start)||Number(a.part.num)-Number(b.part.num));
+}
+function studentName(id){
+  const s=state.students.find(x=>x.id===id); return s?`${s.name} ${s.last}`:'';
+}
+function sectionLabel(s){return {apertura:'Apertura',tesoros:'Tesoros de la Biblia',smm:'Seamos mejores maestros',nvc:'Nuestra Vida Cristiana',cierre:'Cierre'}[s]||s}
+function cleanProgramText(text){
+  return String(text||'')
+    .replace(/\b(?:WTSS|MEPS(?:\s+Bookman\s+WTS)?|Times New Roman|Latha|Arial|Ari)\b[;, ]*/gi,' ')
+    .replace(/\s*;\s*/g,'; ')
+    .replace(/\s{2,}/g,' ')
+    .replace(/[;,.\s]+$/,'')
+    .trim();
+}
+function compactProgramDetail(raw,title='',time=''){
+  let text=cleanProgramText(raw);
+  if(!text) return '';
+  const safeTitle=String(title||'').replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  if(safeTitle){
+    text=text.replace(new RegExp('^'+safeTitle+'\\s*','i'),'').trim();
+    text=text.replace(new RegExp('^["“”«»\\s-]*'+safeTitle+'["“”«»]?\\s*','i'),'').trim();
+  }
+  text=text.replace(/\(\s*\d+\s*(?:mins?\.?|minutos?)\s*\)/ig,'').trim();
+  text=text.replace(/^[-–—:,.\s]+/,'').trim();
+  const study=text.match(/\b(?:lfb|lff|bt|cl|rr|kr|jy|ia|bhs|bh|fg)\b[^.;]{0,90}/i)
+    || text.match(/\b(?:lecciones?|cap[ií]tulo|p[aá]rr\.?|p[aá]g\.?)\b[^.;]{0,90}/i);
+  if(/estudio b[ií]blico de la congregaci[oó]n/i.test(title) && study) return cleanProgramText(study[0]);
+  const method=text.match(/\b(?:Discurso|An[aá]lisis con el auditorio|An[aá]lisis|Escenificaci[oó]n|Video|Preguntas y respuestas|Lectura de la Biblia|Busquemos perlas)\b[^.;]{0,90}/i);
+  if(method) return cleanProgramText(method[0]);
+  const first=text.split(/[.;]\s+/).map(x=>cleanProgramText(x)).find(x=>x && x.length<=95) || text;
+  return first.length>95 ? first.slice(0,95).replace(/\s+\S*$/,'')+'...' : first;
+}
+function partDisplayDetail(part){
+  return compactProgramDetail(part?.detail||'', part?.title||'', part?.time||'');
+}function isEbcPart(part){return part && (part.privReq==='conductor_ebc' || /estudio b[ií]blico de la congregaci[oó]n/i.test(part.title||''))}
+function partBadge(s){return s==='smm'?'b-purple':s==='tesoros'?'b-pri':s==='nvc'?'b-ok':'b-gray'}
+function helperNeedLabel(part){return part?.helperAllowed?'ayudante recomendado':'ayudante'}
+function assignmentSlotsForPart(part){
+  let total=1, filled=part.assignedId?1:0;
+  if(isEbcPart(part)){total++; if(part.readerId) filled++}
+  if(part.helperAllowed){total++; if(part.helperId) filled++}
+  return {total,filled};
+}
+function weekAssignmentProgress(w){
+  if(isNoAssignmentWeek(w)) return {total:0,filled:0,complete:true};
+  let total=3, filled=[w.openingPrayerId,w.presidentId,w.closingPrayerId].filter(Boolean).length;
+  (w.parts||[]).forEach(part=>{const slots=assignmentSlotsForPart(part); total+=slots.total; filled+=slots.filled});
+  return {total,filled,complete:filled===total};
+}
+function renderPanel(){
+  const active=state.students.filter(s=>s.status==='activo').length;
+  const rows=allAssignments();
+  const assigned=rows.filter(r=>r.part.assignedId).length;
+  const done=rows.filter(r=>r.part.done).length;
+  const pending=assigned-done;
+  document.getElementById('stats').innerHTML=[
+    ['Estudiantes activos',active,`${state.students.length} registrados`,'b-pri'],
+    ['Semanas cargadas',state.weeks.length,'programas en base local','b-ok'],
+    ['Partes asignadas',assigned,`${pending} pendientes`,'b-warn'],
+    ['Completadas',done, assigned?Math.round(done/assigned*100)+'% del total':'sin asignar','b-info']
+  ].map(x=>`<div class="stat"><small>${x[0]}</small><b>${x[1]}</b><span>${x[2]}</span></div>`).join('');
+  const today=new Date(); today.setHours(0,0,0,0);
+  const next=state.weeks.filter(w=>parseISO(w.end)>=today).sort((a,b)=>parseISO(a.start)-parseISO(b.start)).slice(0,4);
+  document.getElementById('nextWeeks').innerHTML=next.length?next.map(w=>{
+    const progress=weekAssignmentProgress(w);
+    return `<div style="padding:10px 0;border-bottom:1px solid var(--line)">
+      <div style="display:flex;justify-content:space-between;gap:10px"><b>${weekLabel(w)}</b><span class="badge ${progress.complete?'b-ok':'b-warn'}">${progress.filled}/${progress.total}</span></div>
+      <div style="font-size:12px;color:var(--muted);margin-top:4px">${w.lectura||'Sin lectura'} · reunión: ${fmtDate(getMeetingDate(w))}</div>
+    </div>`
+  }).join(''):'<div class="empty-state"><b>No hay semanas próximas</b><span>Cargá un programa desde Importar PDF.</span></div>';
+  const womenWrong=allAssignments().filter(({part})=>part.assignedId && part.section!=='smm' && (state.students.find(s=>s.id===part.assignedId)?.sex==='F'));
+  const noStudents=state.students.length===0;
+  const unassigned=rows.filter(r=>!r.part.assignedId).length;
+  document.getElementById('alerts').innerHTML=[
+    noStudents?`<div class="notice warn">Todavía no cargaste estudiantes. Agregalos para poder generar asignaciones.</div>`:'',
+    womenWrong.length?`<div class="notice bad">${womenWrong.length} asignación/es incumplen la regla de participación femenina. Revisá las asignaciones manuales.</div>`:'',
+    unassigned?`<div class="notice">${unassigned} parte/s están sin asignar. Podés generar o completar manualmente.</div>`:`<div class="notice">Todo el programa cargado tiene asignaciones completas.</div>`,
+    state.activities.slice(-4).reverse().map(a=>`<div style="font-size:12px;color:var(--muted);padding:8px 0;border-bottom:1px solid var(--line)">${a.msg}<br><span style="color:var(--muted2)">${new Date(a.date).toLocaleString('es-AR')}</span></div>`).join('')
+  ].join('');
+}
+function moveMonth(n){viewDate.setMonth(viewDate.getMonth()+n); currentWeekIndex=0; renderProgram()}
+function goToday(){viewDate=new Date(); currentWeekIndex=0; renderProgram()}
+function moveWeek(n){
+  const weeks=monthWeeks();
+  if(!weeks.length) return;
+  currentWeekIndex+=n;
+  if(currentWeekIndex<0){
+    viewDate.setMonth(viewDate.getMonth()-1);
+    const prevWeeks=monthWeeks();
+    currentWeekIndex=Math.max(prevWeeks.length-1,0);
+  }else if(currentWeekIndex>=weeks.length){
+    viewDate.setMonth(viewDate.getMonth()+1);
+    currentWeekIndex=0;
+  }
+  renderProgram();
+}
+function goWeek(i){currentWeekIndex=i; renderProgram()}
+function renderProgram(){
+  document.getElementById('monthLabel').textContent=`${MONTHS[visibleMonth()]} ${visibleYear()}`;
+  const weeks=monthWeeks();
+  const alertBox=document.getElementById('monthAlerts');
+  if(alertBox) alertBox.innerHTML=weeks.length?renderMonthWarnings(weeks):'';
+  const weeksBox=document.getElementById('weeks');
+  if(!weeks.length){
+    currentWeekIndex=0;
+    weeksBox.innerHTML=`<div class="card empty-state"><b>No hay programa para ${MONTHS[visibleMonth()]} ${visibleYear()}</b><span>Importá un PDF, pegá texto o creá una semana manual.</span><br><br><button class="btn btn-primary" onclick="showPage('importar')">Actualizar temas</button></div>`;
+    return;
+  }
+  if(currentWeekIndex<0) currentWeekIndex=0;
+  if(currentWeekIndex>=weeks.length) currentWeekIndex=weeks.length-1;
+  const w=weeks[currentWeekIndex];
+  const prevLabel=currentWeekIndex>0?'Semana anterior':'Mes anterior';
+  const nextLabel=currentWeekIndex<weeks.length-1?'Semana siguiente':'Mes siguiente';
+  weeksBox.innerHTML=`
+    <div class="weekpager">
+      <button class="btn btn-sec icon-btn" onclick="moveWeek(-1)" title="${prevLabel}">‹</button>
+      <div class="weekpager-main">
+        <span class="week-count">Semana ${currentWeekIndex+1} de ${weeks.length}</span>
+        <b>${escapeHTML(weekDisplayLabel(w))}</b>
+        <span>${escapeHTML(w.lectura||'Sin lectura')} · reunión: ${escapeHTML(fmtDate(getMeetingDate(w)))}</span>
+      </div>
+      <button class="btn btn-sec icon-btn" onclick="moveWeek(1)" title="${nextLabel}">›</button>
+    </div>
+    ${renderWeek(w)}
+  `;
+}
+function partDisplayName(part){
+  if(!part) return 'parte';
+  const n=Number(part.num);
+  const tema=Number.isFinite(n)?`Tema ${n}`:'Tema';
+  const title=(part.title||'').trim();
+  return `${tema}${title?`: ${title}`:''}`;
+}
+function compactItems(items,limit=7){
+  const clean=[...new Set(items.filter(Boolean))];
+  if(clean.length<=limit) return clean;
+  return clean.slice(0,limit).concat(`y ${clean.length-limit} más`);
+}
+function collectMonthWarnings(weeks){
+  const sorted=[...weeks].sort((a,b)=>parseISO(a.start)-parseISO(b.start));
+  const missing=[];
+  const repeats=[];
+  sorted.forEach(w=>{
+    const items=[];
+    if(isNoAssignmentWeek(w)){
+      if(!w.specialDate && !w.specialEventText && !w.customWeekLabel) items.push('fecha o detalle del evento especial');
+      if(items.length) missing.push({week:w,items});
+      return;
+    }
+    if(!w.openingPrayerId) items.push('oración de apertura');
+    if(!w.presidentId) items.push('presidente / palabras de introducción');
+    if(!w.closingPrayerId) items.push('oración de cierre');
+    if((w.specialEventType||'none')!=='none' && !w.specialDate && !w.specialEventText && !w.customWeekLabel) items.push('fecha o detalle del evento especial');
+    (w.parts||[]).forEach(part=>{
+      if(!part.assignedId) items.push(partDisplayName(part));
+      if(isEbcPart(part) && !part.readerId) items.push(`${partDisplayName(part)} — lector EBC`);
+      if(part.helperAllowed && !part.helperId) items.push(`${partDisplayName(part)} — ${helperNeedLabel(part)}`);
+    });
+    if(items.length) missing.push({week:w,items});
+  });
+  for(let i=1;i<sorted.length;i++){
+    const prev=sorted[i-1], curr=sorted[i];
+    if(isNoAssignmentWeek(prev) || isNoAssignmentWeek(curr)) continue;
+    const roleChecks=[
+      ['openingPrayerId','oración de apertura'],
+      ['presidentId','presidente / palabras de introducción'],
+      ['closingPrayerId','oración de cierre']
+    ];
+    roleChecks.forEach(([key,label])=>{
+      if(curr[key] && prev[key] && curr[key]===prev[key]) repeats.push({student:studentName(curr[key]),topic:label,prev,curr});
+    });
+    (curr.parts||[]).forEach(cp=>{
+      const pp=(prev.parts||[]).find(x=>String(x.section)===String(cp.section) && Number(x.num)===Number(cp.num));
+      if(!pp) return;
+      const topic=partDisplayName(cp);
+      if(cp.assignedId && pp.assignedId && cp.assignedId===pp.assignedId) repeats.push({student:studentName(cp.assignedId),topic,prev,curr});
+      if(isEbcPart(cp) && cp.readerId && pp.readerId && cp.readerId===pp.readerId) repeats.push({student:studentName(cp.readerId),topic:`${topic} — lector EBC`,prev,curr});
+      if(cp.helperAllowed && cp.helperId && pp.helperId && cp.helperId===pp.helperId) repeats.push({student:studentName(cp.helperId),topic:`${topic} — ayudante`,prev,curr});
+    });
+  }
+  return {missing,repeats};
+}
+function renderMonthWarnings(weeks){
+  const {missing,repeats}=collectMonthWarnings(weeks);
+  if(!missing.length && !repeats.length){
+    return `<div class="program-alerts"><div class="notice ok-line">✓ Programa mensual completo: no se detectan datos faltantes ni repeticiones en semanas seguidas para el mismo tema.</div></div>`;
+  }
+  const missingHTML=missing.length?`<div class="alert-card warn-line"><h3>Falta completar o revisar</h3><ul>${missing.map(m=>`<li><b>${escapeHTML(weekDisplayLabel(m.week))}:</b> ${compactItems(m.items).map(escapeHTML).join(', ')}</li>`).join('')}</ul></div>`:'';
+  const repeatHTML=repeats.length?`<div class="alert-card bad-line"><h3>Repeticiones en semanas seguidas</h3><ul>${repeats.map(r=>`<li><b>${escapeHTML(r.student||'Sin nombre')}:</b> aparece dos semanas seguidas en <b>${escapeHTML(r.topic)}</b> (${escapeHTML(weekDisplayLabel(r.prev))} y ${escapeHTML(weekDisplayLabel(r.curr))}).</li>`).join('')}</ul></div>`:'';
+  return `<div class="program-alerts"><div class="notice warn"><b>Revisar antes de imprimir:</b> hay ${missing.length+repeats.length} aviso/s en el programa mensual.</div>${missingHTML}${repeatHTML}</div>`;
+}
+function renderWeek(w){
+  const groups=['tesoros','smm','nvc'].map(sec=>({sec,parts:w.parts.filter(p=>p.section===sec)})).filter(g=>g.parts.length);
+  const progress=weekAssignmentProgress(w);
+  if(isNoAssignmentWeek(w)) return renderNoAssignmentWeek(w,progress);
+  return `<div class="card week">
+    <div class="week-head">
+      <div><h3>${weekDisplayLabel(w)} · ${w.lectura||'Sin lectura'}</h3>
+      ${specialEventLabel(w)?`<div class="special-pill">${escapeHTML(specialEventLabel(w))}</div>`:''}
+      <p>Reunión: ${fmtDate(getMeetingDate(w))} ${state.config.time||''} · Canción inicial ${w.openingSong||'—'} · Fuente: ${w.source||'manual'}</p>
+      <p><b>Oración apertura:</b> ${studentName(w.openingPrayerId)||'Por asignar'} · <b>Presidente:</b> ${studentName(w.presidentId)||'Por asignar'} · <b>Oración cierre:</b> ${studentName(w.closingPrayerId)||'Por asignar'}</p></div>
+      <div class="week-actions">
+        <span class="badge ${progress.complete?'b-ok':'b-warn'}">${progress.filled}/${progress.total}</span>
+        <button class="btn btn-sec btn-sm" onclick="openWeek('${w.id}')">Editar temas y roles</button>
+        <button class="btn btn-sec btn-sm" onclick="openS89Week('${w.id}')">Hojas S-89</button>
+        <button class="btn btn-sec btn-sm" onclick="clearWeekAssignments('${w.id}')">Limpiar</button>
+      </div>
+    </div>
+    <div class="section"><h4>Apertura</h4>
+      <div class="part"><div class="num">•</div><div><div class="part-title">Canción ${w.openingSong||'—'} y oración</div><div class="assignee ${w.openingPrayerId?'':'empty'}">${studentName(w.openingPrayerId)||'Por asignar'}</div></div><div></div></div>
+      <div class="part"><div class="num">•</div><div><div class="part-title">Palabras de introducción <span class="badge b-gray">1 min.</span></div><div class="assignee ${w.presidentId?'':'empty'}">${studentName(w.presidentId)||'Presidente por asignar'}</div></div><div></div></div>
+    </div>
+    ${groups.map(g=>`<div class="section"><h4>${sectionLabel(g.sec)}</h4>${g.parts.map(part=>renderPart(w,part)).join('')}</div>`).join('')}
+    <div class="section"><h4>Cierre</h4>
+      <div class="part"><div class="num">•</div><div><div class="part-title">Canción ${w.closingSong||'—'} y oración</div><div class="assignee ${w.closingPrayerId?'':'empty'}">${studentName(w.closingPrayerId)||'Por asignar'}</div></div><div></div></div>
+    </div>
+  </div>`;
+}
+function renderNoAssignmentWeek(w,progress){
+  return `<div class="card week">
+    <div class="week-head">
+      <div><h3>${weekDisplayLabel(w)} Â· ${w.lectura||'Evento especial'}</h3>
+      ${specialEventLabel(w)?`<div class="special-pill">${escapeHTML(specialEventLabel(w))}</div>`:''}
+      <p>No hay asignaciÃ³n de temas esta semana.</p></div>
+      <div class="week-actions">
+        <span class="badge b-ok">Sin asignaciones</span>
+        <button class="btn btn-sec btn-sm" onclick="openWeek('${w.id}')">Editar evento</button>
+      </div>
+    </div>
+    <div class="notice ok-line"><b>${escapeHTML(SPECIAL_EVENTS[w.specialEventType]||'Evento especial')}</b><br>No hay programa regular Vida y Ministerio ni asignaciones para esta semana.</div>
+  </div>`;
+}
+function renderPart(w,part){
+  const assigned=part.assignedId?studentName(part.assignedId):'Por asignar';
+  const helper=part.helperId?studentName(part.helperId):'';
+  const reader=part.readerId?studentName(part.readerId):'';
+  const isEbc=isEbcPart(part);
+  const invalid=part.assignedId && part.section!=='smm' && state.students.find(s=>s.id===part.assignedId)?.sex==='F';
+  return `<div class="part">
+    <div class="num">${part.num}</div>
+    <div>
+      <div class="part-title">${escapeHTML(part.title)} <span class="badge ${partBadge(part.section)}">${part.time||'—'}</span>${part.helperAllowed?` <span class="badge b-info">${helperNeedLabel(part)}</span>`:''}${isEbc?` <span class="badge b-ok">Lector EBC</span>`:''}${invalid?` <span class="badge b-bad">Revisar regla</span>`:''}</div>
+      ${partDisplayDetail(part)?`<div class="part-meta">${escapeHTML(partDisplayDetail(part))}</div>`:''}
+      <div class="assignee ${part.assignedId?'':'empty'}">${assigned}${reader?` <span class="helper">/ Lector: ${reader}</span>`:''}${helper?` <span class="helper">/ Ayudante: ${helper}</span>`:''}</div>
+    </div>
+    <div class="toolbar">
+      <button class="btn btn-sec btn-sm" onclick="openAssign('${w.id}','${part.id}')">Asignar</button>
+      <button class="btn ${part.done?'btn-ok':'btn-sec'} btn-sm" onclick="toggleDone('${w.id}','${part.id}')">${part.done?'Hecha':'Pendiente'}</button>
+    </div>
+  </div>`;
+}
+function clearWeekAssignments(weekId){
+  if(!confirm('¿Limpiar todas las asignaciones de esta semana?')) return;
+  const w=state.weeks.find(x=>x.id===weekId); w.openingPrayerId=null; w.presidentId=null; w.closingPrayerId=null; w.parts.forEach(p=>{p.assignedId=null;p.helperId=null;p.readerId=null;p.done=false;p.attendance='pendiente'}); saveState(); act('Asignaciones limpiadas: '+weekLabel(w)); renderProgram(); toast('Semana limpiada');
+}
+function toggleDone(weekId,partId){
+  const p=state.weeks.find(w=>w.id===weekId).parts.find(p=>p.id===partId); p.done=!p.done; p.attendance=p.done?'completada':'pendiente'; saveState(); renderProgram();
+}
+function generateMonthAssignments(){
+  const weeks=monthWeeks();
+  if(!weeks.length){toast('No hay semanas en este mes');return}
+  if(!state.students.some(s=>s.status==='activo')){toast('Primero cargá estudiantes activos');return}
+  weeks.forEach(w=>generateWeek(w));
+  saveState(); act(`Asignaciones generadas para ${MONTHS[visibleMonth()]} ${visibleYear()}`); renderProgram(); renderPanel();
+  const warns=collectMonthWarnings(monthWeeks());
+  toast((warns.missing.length||warns.repeats.length)?'Asignaciones generadas. Hay avisos para revisar.':'Asignaciones generadas');
+}
+function generateWeek(w){
+  if(isNoAssignmentWeek(w)){clearWeekAssignmentData(w);return}
+  const used=new Set();
+  const month=monthKey(parseISO(w.start));
+  const prev=previousWeekBefore(w);
+  w.openingPrayerId=null; w.presidentId=null; w.closingPrayerId=null;
+  w.parts.forEach(p=>{p.assignedId=null;p.helperId=null;p.readerId=null;p.done=false;p.attendance='pendiente'});
+  function assignRole(priv,section,avoidIds=[]){
+    const c=pickCandidate(priv,section,w.start,month,used,avoidIds);
+    if(c){used.add(c.id); return c.id}
+    return null;
+  }
+  w.openingPrayerId=assignRole('oracion','apertura',[prev?.openingPrayerId].filter(Boolean));
+  w.presidentId=assignRole('presidente','apertura',[prev?.presidentId].filter(Boolean));
+  const sortedParts=[...w.parts].sort((a,b)=>a.num-b.num);
+  sortedParts.forEach(part=>{
+    const prevPart=previousMatchingPart(prev,part);
+    const c=pickCandidate(part.privReq, part.section, w.start, month, used, [prevPart?.assignedId].filter(Boolean));
+    part.assignedId=c?c.id:null; if(c) used.add(c.id);
+    if(isEbcPart(part)){
+      const r=pickCandidate('lector_ebc','nvc',w.start,month,used, [prevPart?.readerId].filter(Boolean));
+      part.readerId=r?r.id:null; if(r) used.add(r.id);
+    }else part.readerId=null;
+    if(part.helperAllowed && Number(state.config.autoHelpers)){
+      const h=pickCandidate('ayudante_smm','smm',w.start,month,used, [prevPart?.helperId].filter(Boolean));
+      part.helperId=h?h.id:null; if(h) used.add(h.id);
+    }else part.helperId=null;
+  });
+  w.closingPrayerId=assignRole('oracion','cierre',[prev?.closingPrayerId].filter(Boolean));
+}
+function previousWeekBefore(w){
+  const start=parseISO(w.start);
+  return state.weeks.filter(x=>x.id!==w.id && parseISO(x.start)<start).sort((a,b)=>parseISO(b.start)-parseISO(a.start))[0]||null;
+}
+function previousMatchingPart(prev,part){
+  if(!prev || !part) return null;
+  return (prev.parts||[]).find(x=>String(x.section)===String(part.section) && Number(x.num)===Number(part.num))||null;
+}
+function pickCandidate(priv,section,date,month,used,avoidIds=[]){
+  if(!priv) return null;
+  const minWeeks=Number(state.config.minWeeks||0), maxMonth=Number(state.config.maxMonth||99);
+  let pool=state.students.filter(s=>s.status==='activo' && s.privileges?.includes(priv) && !used.has(s.id));
+  if(section!=='smm' || isMenOnlyPrivilege(priv)) pool=pool.filter(s=>s.sex==='M');
+  const preferredPool=pool.filter(s=>!avoidIds.includes(s.id));
+  if(preferredPool.length) pool=preferredPool;
+  function score(s){
+    const last=lastAssignmentDate(s.id);
+    const monthCount=countAssignmentsMonth(s.id,month);
+    return {s,last:last?parseISO(last):new Date(0),monthCount,total:countAssignmentsTotal(s.id)};
+  }
+  let scored=pool.map(score);
+  let strict=scored.filter(x=>x.monthCount<maxMonth && weeksBetween(x.last,parseISO(date))>=minWeeks);
+  if(!strict.length) strict=scored.filter(x=>x.monthCount<maxMonth);
+  if(!strict.length) strict=scored;
+  strict.sort((a,b)=>a.monthCount-b.monthCount || a.total-b.total || a.last-b.last || a.s.last.localeCompare(b.s.last));
+  return strict[0]?.s || null;
+}
+function weeksBetween(a,b){if(!a || a.getTime()===0) return 999; return Math.floor((b-a)/(1000*60*60*24*7))}
+function lastAssignmentDate(studentId){
+  let dates=[];
+  allAssignments().forEach(({week,part})=>{if(part.assignedId===studentId||part.helperId===studentId||part.readerId===studentId) dates.push(week.start)});
+  return dates.sort().pop() || null;
+}
+function countAssignmentsMonth(studentId,mkey){return allAssignments().filter(({week,part})=>monthKey(parseISO(week.start))===mkey && (part.assignedId===studentId||part.helperId===studentId||part.readerId===studentId)).length}
+function countAssignmentsTotal(studentId){return allAssignments().filter(({part})=>part.assignedId===studentId||part.helperId===studentId||part.readerId===studentId).length}
+function roleForStudentInPart(studentId,part){
+  if(part.assignedId===studentId){
+    if(isEbcPart(part)) return 'Conductor EBC';
+    if(part.privReq==='oracion') return part.section==='cierre'?'Oración de cierre':'Oración de apertura';
+    if(part.privReq==='presidente') return 'Presidente';
+    return 'Estudiante';
+  }
+  if(part.readerId===studentId) return 'Lector EBC';
+  if(part.helperId===studentId) return 'Ayudante';
+  return '';
+}
+function studentAssignmentHistory(studentId){
+  const rows=[];
+  allAssignments().forEach(({week,part})=>{
+    ['assignedId','readerId','helperId'].forEach(key=>{
+      if(part[key]===studentId){
+        const role=key==='readerId'?'Lector EBC':key==='helperId'?'Ayudante':roleForStudentInPart(studentId,part);
+        rows.push({week,part,role});
+      }
+    });
+  });
+  return rows.sort((a,b)=>parseISO(b.week.start)-parseISO(a.week.start)||Number(a.part.num)-Number(b.part.num));
+}
+
+function populateFilters(){
+  const f=document.getElementById('studentPrivFilter');
+  if(f) f.innerHTML='<option value="">Todos</option>'+PRIVS.map(p=>`<option value="${p.id}">${p.label}</option>`).join('');
+}
+function renderStudents(){
+  const q=(document.getElementById('studentSearch')?.value||'').toLowerCase();
+  const sex=document.getElementById('studentSexFilter')?.value||'';
+  const priv=document.getElementById('studentPrivFilter')?.value||'';
+  const rows=state.students.filter(s=>(!q||`${s.name} ${s.last}`.toLowerCase().includes(q))&&(!sex||s.sex===sex)&&(!priv||s.privileges?.includes(priv))).sort((a,b)=>a.last.localeCompare(b.last));
+  document.getElementById('studentsBody').innerHTML=rows.length?rows.map(s=>{
+    const privs=(s.privileges||[]).map(id=>`<span class="badge ${id.includes('smm')?'b-purple':'b-gray'}">${PRIVS.find(p=>p.id===id)?.label||id}</span>`).join(' ');
+    const last=lastAssignmentDate(s.id);
+    return `<tr><td><b>${escapeHTML(s.last)}, ${escapeHTML(s.name)}</b><br><span style="color:var(--muted2);font-size:12px">${s.status}</span></td>
+    <td><span class="badge ${s.sex==='F'?'b-purple':'b-pri'}">${s.sex==='F'?'Femenino':'Masculino'}</span></td>
+    <td>${privs||'<span class="badge b-gray">Sin privilegios</span>'}</td><td>${countAssignmentsTotal(s.id)}</td><td>${last?fmtDate(last):'—'}</td>
+    <td><div class="toolbar"><button class="btn btn-sec btn-sm" onclick="openStudentProfile('${s.id}')">Ficha</button><button class="btn btn-sec btn-sm" onclick="openStudent('${s.id}')">Editar</button><button class="btn btn-bad btn-sm" onclick="deleteStudent('${s.id}')">Eliminar</button></div></td></tr>`;
+  }).join(''):'<tr><td colspan="6" style="text-align:center;color:var(--muted2);padding:28px">No hay estudiantes para mostrar.</td></tr>';
+}
+function openStudent(id=null){
+  editingStudentId=id;
+  const s=state.students.find(x=>x.id===id);
+  document.getElementById('studentModalTitle').textContent=s?'Editar estudiante':'Nuevo estudiante';
+  document.getElementById('studentId').value=s?.id||'';
+  document.getElementById('stName').value=s?.name||'';
+  document.getElementById('stLast').value=s?.last||'';
+  document.getElementById('stSex').value=s?.sex||'M';
+  document.getElementById('stStatus').value=s?.status||'activo';
+  document.getElementById('stNotes').value=s?.notes||'';
+  selectedPrivs=[...(s?.privileges||[])];
+  renderPrivChips(); openModal('studentModal');
+}
+function openStudentProfile(id){
+  const s=state.students.find(x=>x.id===id); if(!s) return;
+  const history=studentAssignmentHistory(id);
+  const privs=(s.privileges||[]).map(pid=>`<span class="badge ${pid.includes('smm')?'b-purple':'b-gray'}">${PRIVS.find(p=>p.id===pid)?.label||pid}</span>`).join(' ');
+  document.getElementById('studentProfileTitle').textContent=`Ficha · ${s.name} ${s.last}`;
+  document.getElementById('studentProfileContent').innerHTML=`
+    <div class="student-profile">
+      <div class="profile-head">
+        <div>
+          <h4>${escapeHTML(s.name)} ${escapeHTML(s.last)}</h4>
+          <p>${s.sex==='F'?'Femenino':'Masculino'} · ${escapeHTML(s.status||'activo')}</p>
+        </div>
+        <div class="toolbar">
+          <span class="badge b-pri">${history.length} asignación/es</span>
+          ${history[0]?`<span class="badge b-info">Última: ${escapeHTML(fmtDate(getMeetingDate(history[0].week)))}</span>`:''}
+        </div>
+      </div>
+      <div class="card" style="box-shadow:none">
+        <div class="card-head"><span class="card-title">Privilegios</span></div>
+        <div class="chips">${privs||'<span class="badge b-gray">Sin privilegios</span>'}</div>
+        ${s.notes?`<div style="margin-top:14px"><label>Notas</label><div class="profile-notes">${escapeHTML(s.notes)}</div></div>`:''}
+      </div>
+      <div class="card" style="padding:0;overflow:auto;box-shadow:none">
+        <table>
+          <thead><tr><th>Fecha</th><th>Semana</th><th>Rol</th><th>Sección</th><th>Tema</th><th>Detalle</th></tr></thead>
+          <tbody>${history.length?history.map(({week,part,role})=>`<tr>
+            <td>${escapeHTML(fmtDate(getMeetingDate(week)))}</td>
+            <td>${escapeHTML(weekDisplayLabel(week))}</td>
+            <td><span class="badge ${role==='Ayudante'?'b-info':role.includes('EBC')?'b-ok':'b-pri'}">${escapeHTML(role)}</span></td>
+            <td><span class="badge ${partBadge(part.section)}">${escapeHTML(sectionLabel(part.section))}</span></td>
+            <td>${escapeHTML(partDisplayName(part))}</td>
+            <td>${escapeHTML(part.detail||'')}</td>
+          </tr>`).join(''):`<tr><td colspan="6" style="text-align:center;color:var(--muted2);padding:28px">Todavía no tiene asignaciones registradas.</td></tr>`}</tbody>
+        </table>
+      </div>
+    </div>`;
+  openModal('studentProfileModal');
+}
+function renderPrivChips(){
+  const sex=document.getElementById('stSex').value;
+  if(sex==='F') selectedPrivs=selectedPrivs.filter(id=>['smm','ayudante_smm'].includes(id));
+  document.getElementById('privChips').innerHTML=PRIVS.map(p=>{
+    const disabled=sex==='F' && !['smm','ayudante_smm'].includes(p.id);
+    const click=disabled?'':`onclick="togglePriv('${p.id}')"`;
+    return `<button type="button" class="chip ${selectedPrivs.includes(p.id)?'active':''} ${disabled?'disabled':''}" ${click}>${p.label}</button>`;
+  }).join('');
+}
+function togglePriv(id){selectedPrivs=selectedPrivs.includes(id)?selectedPrivs.filter(x=>x!==id):[...selectedPrivs,id]; renderPrivChips()}
+function saveStudent(){
+  const name=document.getElementById('stName').value.trim(), last=document.getElementById('stLast').value.trim();
+  if(!name||!last){toast('Nombre y apellido son obligatorios');return}
+  const obj={id:editingStudentId||('st-'+Date.now()),name,last,sex:document.getElementById('stSex').value,status:document.getElementById('stStatus').value,privileges:[...selectedPrivs],notes:document.getElementById('stNotes').value.trim()};
+  if(obj.sex==='F') obj.privileges=obj.privileges.filter(id=>['smm','ayudante_smm'].includes(id));
+  const ix=state.students.findIndex(s=>s.id===obj.id); if(ix>=0) state.students[ix]=obj; else state.students.push(obj);
+  saveState(); act((ix>=0?'Estudiante actualizado: ':'Estudiante agregado: ')+obj.name+' '+obj.last); closeModal('studentModal'); renderStudents(); renderPanel(); toast('Estudiante guardado');
+}
+function deleteStudent(id){
+  if(!confirm('¿Eliminar estudiante? Las asignaciones existentes quedarán sin asignar.')) return;
+  state.students=state.students.filter(s=>s.id!==id);
+  state.weeks.forEach(w=>w.parts.forEach(p=>{if(p.assignedId===id)p.assignedId=null;if(p.helperId===id)p.helperId=null;if(p.readerId===id)p.readerId=null}));
+  saveState(); renderStudents(); renderProgram(); toast('Estudiante eliminado');
+}
+function openAssign(weekId,partId){
+  const w=state.weeks.find(w=>w.id===weekId), part=w.parts.find(p=>p.id===partId); editingAssign={weekId,partId};
+  const eligible=eligibleStudents(part.privReq,part.section);
+  const all=state.students.filter(s=>s.status==='activo');
+  const isEbc=isEbcPart(part), appointedOnly=isWhatWouldYouSayPart(part);
+  document.getElementById('assignTitle').textContent=`${part.num}. ${part.title}`;
+  document.getElementById('assignContent').innerHTML=`
+    <div class="notice ${part.section!=='smm'||appointedOnly?'warn':''}">${appointedOnly?'Esta parte solo puede asignarse a un anciano o siervo ministerial.':part.section==='smm'?'Esta parte admite hermanos o hermanas con privilegio SMM.':'Esta sección filtra automáticamente solo varones, según la regla solicitada.'}${isEbc?' En el Estudio bíblico de la congregación podés asignar conductor y lector.':''}</div>
+    <div class="field" style="margin-top:14px"><label>${isEbc?'Conductor del estudio bíblico':appointedOnly?'Anciano o siervo ministerial':'Estudiante'}</label><select id="assStudent"><option value="">— Sin asignar —</option>${eligible.map(s=>`<option value="${s.id}" ${part.assignedId===s.id?'selected':''}>${s.last}, ${s.name}</option>`).join('')}</select></div>
+    ${isEbc?`<div class="field"><label>Lector del estudio bíblico de la congregación</label><select id="assReader"><option value="">— Sin lector —</option>${eligibleStudents('lector_ebc','nvc').map(s=>`<option value="${s.id}" ${part.readerId===s.id?'selected':''}>${s.last}, ${s.name}</option>`).join('')}</select></div>`:'<input id="assReader" type="hidden" value="">'}
+    ${part.helperAllowed?`<div class="field"><label>${helperNeedLabel(part)}</label><select id="assHelper"><option value="">— Sin ayudante —</option>${eligibleStudents('ayudante_smm','smm').map(s=>`<option value="${s.id}" ${part.helperId===s.id?'selected':''}>${s.last}, ${s.name}</option>`).join('')}</select></div>`:'<input id="assHelper" type="hidden" value="">'}
+    <div class="form-row"><div><label>Estado</label><select id="assDone"><option value="0" ${!part.done?'selected':''}>Pendiente</option><option value="1" ${part.done?'selected':''}>Completada</option></select></div><div><label>Asistencia</label><select id="assAttend"><option value="pendiente">Pendiente</option><option value="presente">Presente</option><option value="ausente">Ausente</option><option value="reemplazo">Reemplazo</option></select></div></div>
+    <div class="field" style="margin-top:14px"><label>Notas</label><textarea id="assNotes">${escapeHTML(part.notes||'')}</textarea></div>
+    <details style="margin-top:10px"><summary style="color:var(--muted);cursor:pointer">Ver todos los estudiantes activos</summary><div style="margin-top:8px;color:var(--muted);font-size:12px">${all.map(s=>`${s.last}, ${s.name} (${s.sex})`).join(' · ')}</div></details>`;
+  document.getElementById('assAttend').value=part.attendance||'pendiente';
+  openModal('assignModal');
+}
+function eligibleStudents(priv,section){
+  let arr=state.students.filter(s=>s.status==='activo' && s.privileges?.includes(priv));
+  if(section!=='smm' || isMenOnlyPrivilege(priv)) arr=arr.filter(s=>s.sex==='M');
+  return arr.sort((a,b)=>a.last.localeCompare(b.last));
+}
+function saveAssignment(){
+  const {weekId,partId}=editingAssign; const part=state.weeks.find(w=>w.id===weekId).parts.find(p=>p.id===partId);
+  const st=document.getElementById('assStudent').value||null, rd=document.getElementById('assReader').value||null, hp=document.getElementById('assHelper').value||null;
+  if(st && hp && st===hp){toast('El estudiante y el ayudante no pueden ser la misma persona');return}
+  if(st && rd && st===rd){toast('El conductor y el lector no pueden ser la misma persona');return}
+  if(rd && hp && rd===hp){toast('El lector y el ayudante no pueden ser la misma persona');return}
+  const s=state.students.find(x=>x.id===st);
+  const reader=state.students.find(x=>x.id===rd);
+  if(s && (part.section!=='smm' || isMenOnlyPrivilege(part.privReq)) && s.sex==='F'){toast('Esta parte solo puede asignarse a un hermano autorizado');return}
+  if(reader && reader.sex==='F'){toast('Regla: el lector del Estudio Bíblico debe ser varón');return}
+  part.assignedId=st; part.readerId=rd; part.helperId=hp; part.done=document.getElementById('assDone').value==='1'; part.attendance=document.getElementById('assAttend').value; part.notes=document.getElementById('assNotes').value.trim();
+  saveState(); closeModal('assignModal'); renderProgram(); renderReports(); toast('Asignación guardada');
+}
+function studentOptions(priv,section,selectedId){
+  const selected=selectedId||'';
+  let arr=eligibleStudents(priv,section);
+  if(selected && !arr.some(s=>s.id===selected)){
+    const s=state.students.find(x=>x.id===selected);
+    if(s) arr=[s,...arr];
+  }
+  return `<option value="">— Sin asignar —</option>`+arr.map(s=>`<option value="${s.id}" ${selected===s.id?'selected':''}>${s.last}, ${s.name}</option>`).join('');
+}
+function openWeek(id){
+  editingWeekId=id; const w=state.weeks.find(x=>x.id===id);
+  document.getElementById('weekTitle').textContent=`Editar ${weekLabel(w)}`;
+  document.getElementById('weekContent').innerHTML=`
+    <div class="form-row-3"><div><label>Desde</label><input id="wkStart" type="date" value="${w.start}"></div><div><label>Hasta</label><input id="wkEnd" type="date" value="${w.end}"></div><div><label>Lectura</label><input id="wkReading" value="${escapeHTML(w.lectura||'')}"></div></div>
+    <div class="field"><label>Fecha personalizada para mostrar en la semana</label><input id="wkCustomLabel" value="${escapeHTML(w.customWeekLabel||'')}" placeholder="Ej.: 4-10 de Mayo / Sábado 16 de mayo"></div>
+    <div class="form-row-3"><div><label>Evento especial</label><select id="wkSpecialType">${Object.entries(SPECIAL_EVENTS).map(([k,v])=>`<option value="${k}" ${((w.specialEventType||'none')===k)?'selected':''}>${v}</option>`).join('')}</select></div><div><label>Fecha del evento especial</label><input id="wkSpecialDate" type="date" value="${w.specialDate||''}"></div><div><label>Detalle / mensaje adicional</label><input id="wkSpecialText" value="${escapeHTML(w.specialEventText||'')}" placeholder="Ej.: No hay reunión entre semana"></div></div>
+    <div class="notice warn" style="margin:8px 0 14px">Para eventos especiales podés elegir <b>Visita del Super.</b>, <b>Asamblea de circuito</b> o <b>Asamblea Regional</b>, y escribir manualmente la fecha que querés mostrar en el programa.</div>
+    <div class="form-row-3"><div><label>Canción inicial</label><input id="wkOpenSong" value="${w.openingSong||''}"></div><div><label>Canción NVC</label><input id="wkNvcSong" value="${w.nvcSong||''}"></div><div><label>Canción cierre</label><input id="wkCloseSong" value="${w.closingSong||''}"></div></div>
+    <div class="form-row-3"><div><label>Oración de apertura</label><select id="wkOpenPrayer">${studentOptions('oracion','apertura',w.openingPrayerId)}</select></div><div><label>Presidente</label><select id="wkPresident">${studentOptions('presidente','apertura',w.presidentId)}</select></div><div><label>Oración de cierre</label><select id="wkClosePrayer">${studentOptions('oracion','cierre',w.closingPrayerId)}</select></div></div>
+    <div class="notice" style="margin:8px 0 14px">Modelo de impresión adaptado al Excel: oración inicial, presidente, secciones por color, ayudante en temas 4 al 6, ayudante en “Explique sus creencias” y oración final.</div>
+    <div style="overflow:auto"><table><thead><tr><th>N°</th><th>Sección</th><th>Título</th><th>Tiempo</th><th>Detalle</th><th>Privilegio</th><th>Ayudante</th></tr></thead><tbody id="wkParts"></tbody></table></div>
+    <button class="btn btn-sec btn-sm" style="margin-top:12px" onclick="addWeekPart()">Agregar parte</button>`;
+  renderWeekPartRows(w);
+  openModal('weekModal');
+}
+function renderWeekPartRows(w){
+  document.getElementById('wkParts').innerHTML=w.parts.sort((a,b)=>a.num-b.num).map((p,i)=>`<tr>
+    <td><input data-i="${i}" data-k="num" type="number" value="${p.num}" style="width:66px"></td>
+    <td><select data-i="${i}" data-k="section"><option value="tesoros">Tesoros</option><option value="smm">SMM</option><option value="nvc">NVC</option><option value="apertura">Apertura</option><option value="cierre">Cierre</option></select></td>
+    <td><input data-i="${i}" data-k="title" value="${escapeHTML(p.title)}" style="min-width:210px"></td>
+    <td><input data-i="${i}" data-k="time" value="${escapeHTML(p.time||'')}" style="width:92px"></td>
+    <td><input data-i="${i}" data-k="detail" value="${escapeHTML(p.detail||'')}" style="min-width:260px"></td>
+    <td><select data-i="${i}" data-k="privReq">${PRIVS.map(pr=>`<option value="${pr.id}">${pr.label}</option>`).join('')}</select></td>
+    <td><select data-i="${i}" data-k="helperAllowed"><option value="0">No</option><option value="1">Sí</option></select></td>
+  </tr>`).join('');
+  w.parts.forEach((p,i)=>{
+    document.querySelector(`[data-i="${i}"][data-k="section"]`).value=p.section;
+    document.querySelector(`[data-i="${i}"][data-k="privReq"]`).value=p.privReq||'smm';
+    document.querySelector(`[data-i="${i}"][data-k="helperAllowed"]`).value=p.helperAllowed?'1':'0';
+  });
+}
+function addWeekPart(){
+  const w=state.weeks.find(x=>x.id===editingWeekId);
+  w.parts.push({id:'part-'+Date.now(),num:(Math.max(0,...w.parts.map(p=>Number(p.num)||0))+1),section:'smm',title:'Nueva parte',time:'',detail:'',privReq:'smm',helperAllowed:false,assignedId:null,helperId:null,done:false,attendance:'pendiente',notes:''});
+  renderWeekPartRows(w);
+}
+function saveWeekEdit(){
+  const w=state.weeks.find(x=>x.id===editingWeekId);
+  w.start=document.getElementById('wkStart').value; w.end=document.getElementById('wkEnd').value; w.lectura=document.getElementById('wkReading').value.trim();
+  w.customWeekLabel=document.getElementById('wkCustomLabel').value.trim();
+  w.specialEventType=document.getElementById('wkSpecialType').value||'none';
+  w.specialDate=document.getElementById('wkSpecialDate').value||'';
+  w.specialEventText=document.getElementById('wkSpecialText').value.trim();
+  w.openingSong=document.getElementById('wkOpenSong').value.trim(); w.nvcSong=document.getElementById('wkNvcSong').value.trim(); w.closingSong=document.getElementById('wkCloseSong').value.trim();
+  w.openingPrayerId=document.getElementById('wkOpenPrayer').value||null; w.presidentId=document.getElementById('wkPresident').value||null; w.closingPrayerId=document.getElementById('wkClosePrayer').value||null;
+  w.parts.forEach((p,i)=>{
+    ['num','section','title','time','detail','privReq','helperAllowed'].forEach(k=>{
+      const el=document.querySelector(`[data-i="${i}"][data-k="${k}"]`); if(!el) return;
+      if(k==='num') p[k]=Number(el.value)||i+1; else if(k==='helperAllowed') p[k]=el.value==='1'; else p[k]=el.value;
+    });
+  });
+  w.parts.forEach(p=>{normalizeImportedSection(p); if(isSmmDiscoursePart(p)){p.helperAllowed=false;p.helperId=null}else if(isExplainBeliefsPart(p)) p.helperAllowed=true}); if(isNoAssignmentWeek(w)) clearWeekAssignmentData(w); w.parts.sort((a,b)=>a.num-b.num); saveState(); closeModal('weekModal'); renderProgram(); toast('Semana guardada');
+}
+function deleteEditingWeek(){
+  if(!confirm('¿Eliminar esta semana completa?')) return;
+  state.weeks=state.weeks.filter(w=>w.id!==editingWeekId); saveState(); closeModal('weekModal'); renderProgram(); toast('Semana eliminada');
+}
+function createBlankWeek(){
+  const start=document.getElementById('manualStart').value, end=document.getElementById('manualEnd').value, lectura=document.getElementById('manualReading').value.trim();
+  if(!start||!end){toast('Indicá fecha desde y hasta');return}
+  const w={id:'wk-'+Date.now(),start,end,lectura,openingSong:'',nvcSong:'',closingSong:'',openingPrayerId:null,presidentId:null,closingPrayerId:null,source:'manual',customWeekLabel:'',specialEventType:'none',specialDate:'',specialEventText:'',parts:[
+    p(1,'tesoros','Discurso','10 mins.','','tesoros'),
+    p(2,'tesoros','Busquemos perlas escondidas','10 mins.','','perlas'),
+    p(3,'tesoros','Lectura de la Biblia','4 mins.','','lector_biblia'),
+    p(4,'smm','Parte estudiante','', '', 'smm', true),
+    p(5,'smm','Parte estudiante','', '', 'smm', true),
+    p(6,'smm','Parte estudiante','', '', 'smm', true),
+    p(7,'nvc','Nuestra Vida Cristiana','', '', 'nvc'),
+    p(8,'nvc','Estudio bíblico de la congregación','30 mins.','','conductor_ebc')
+  ]};
+  state.weeks=state.weeks.filter(x=>x.start!==start); state.weeks.push(w); saveState(); viewDate=parseISO(start); showPage('programa'); toast('Semana creada');
+}
+async function importPdf(){
+  const files=[...document.getElementById('pdfFile').files]; const file=files[0]; const status=document.getElementById('pdfStatus');
+  if(!file){toast('Seleccioná un archivo');return}
+  if(files.length>1){
+    await importTextLikeFiles(files,status);
+    return;
+  }
+  const name=(file.name||'').toLowerCase();
+  if(name.endsWith('.rtf') || name.endsWith('.txt')){
+    await importTextLikeFile(file,status);
+    return;
+  }
+  status.textContent='Preparando lector PDF...';
+  try{
+    const lib=await ensurePdfJs(status);
+    status.textContent='Leyendo PDF...';
+    if(lib.GlobalWorkerOptions) lib.GlobalWorkerOptions.workerSrc='';
+    const buf=await file.arrayBuffer(); const pdf=await openPdfDocument(lib,buf); const pageVariants=[];
+    for(let i=1;i<=pdf.numPages;i++){const pg=await pdf.getPage(i); const txt=await pg.getTextContent({normalizeWhitespace:true,disableCombineTextItems:false}); pageVariants.push(extractPdfPageVariants(txt))}
+    const best=chooseBestPdfCandidate(pageVariants, Number(document.getElementById('pasteYear').value)||new Date().getFullYear(), file.name);
+    const pages=best.pages, weeks=best.weeks;
+    if(!weeks.length){
+      document.getElementById('programText').value=pages.join('\n\n');
+      status.textContent=`Se extrajo texto de ${pdf.numPages} página/s, pero no se detectaron semanas automáticamente. Revisá el texto pegado a la derecha y usá Importar texto.`;
+      return;
+    }
+    document.getElementById('programText').value=pages.join('\n\n');
+    mergeWeeks(weeks); status.textContent=`Listo: ${weeks.length} semana/s importadas desde ${file.name}. Se usó el modo de lectura: ${best.label}.`; toast('PDF importado');
+  }catch(e){console.error(e); status.textContent='No se pudo leer el PDF. Si no hay internet, el lector PDF no puede cargarse; usá la carga por texto o manual.'}
+}
+async function importTextLikeFile(file,status){
+  status.textContent='Leyendo archivo de texto...';
+  const raw=await file.text();
+  const text=file.name.toLowerCase().endsWith('.rtf')?rtfToPlainText(raw):raw;
+  document.getElementById('programText').value=text;
+  const weeks=parseWeeksFromText(text, Number(document.getElementById('pasteYear').value)||new Date().getFullYear(), file.name);
+  if(!weeks.length){
+    status.textContent='Se leyó el archivo, pero no se detectaron semanas. Revisá el texto pegado a la derecha.';
+    toast('No se detectaron semanas');
+    return;
+  }
+  mergeWeeks(weeks);
+  status.textContent=`Listo: ${weeks.length} semana/s importadas desde ${file.name}.`;
+  toast('Archivo importado');
+}
+async function importTextLikeFiles(files,status){
+  const invalid=files.filter(file=>!/(\.rtf|\.txt)$/i.test(file.name||''));
+  if(invalid.length){
+    toast('Para cargar varios archivos, usa solo RTF o TXT');
+    status.textContent='Selecciona varios archivos RTF/TXT o un solo PDF.';
+    return;
+  }
+  status.textContent='Leyendo archivos de texto...';
+  const chunks=[];
+  for(const file of files){
+    const raw=await file.text();
+    chunks.push(file.name.toLowerCase().endsWith('.rtf')?rtfToPlainText(raw):raw);
+  }
+  const text=chunks.join('\n\n');
+  document.getElementById('programText').value=text;
+  const weeks=parseWeeksFromText(text, Number(document.getElementById('pasteYear').value)||new Date().getFullYear(), `${files.length} archivos`);
+  if(!weeks.length){
+    status.textContent='Se leyeron los archivos, pero no se detectaron semanas. Revisa el texto pegado a la derecha.';
+    toast('No se detectaron semanas');
+    return;
+  }
+  mergeWeeks(weeks);
+  status.textContent=`Listo: ${weeks.length} semana/s importadas desde ${files.length} archivo/s.`;
+  toast('Archivos importados');
+}
+function rtfToPlainText(rtf){
+  let text=String(rtf||'');
+  text=text.replace(/HYPERLINK\s+"[^"]*"/gi,' ');
+  text=text.replace(/\\par[d]?/g,'\n').replace(/\\line/g,'\n').replace(/\\tab/g,' ');
+  text=text.replace(/\\u(-?\d+)\??/g,(_,n)=>{
+    let code=Number(n);
+    if(code<0) code+=65536;
+    return String.fromCharCode(code);
+  });
+  text=text.replace(/\\'([0-9a-fA-F]{2})/g,(_,h)=>String.fromCharCode(parseInt(h,16)));
+  text=text.replace(/[{}]/g,' ');
+  text=text.replace(/\\[a-zA-Z]+-?\d* ?/g,' ');
+  text=text.replace(/\\[^a-zA-Z0-9]/g,' ');
+  text=text.replace(/HYPERLINK\s+"[^"]*"/gi,' ');
+  text=text.replace(/https?:\/\/\S+/gi,' ');
+  text=stripMwbReferenceNoise(text);
+  text=text.replace(/[ \t]+\n/g,'\n').replace(/\n{3,}/g,'\n\n').replace(/[ \t]{2,}/g,' ');
+  return text.trim();
+}
+function ensurePdfJs(status){
+  if(window.pdfjsLib) return Promise.resolve(window.pdfjsLib);
+  if(status) status.textContent='Cargando lector PDF local...';
+  return import('/static/gestion/pdf.mjs').then(lib=>{window.pdfjsLib=lib;return lib});
+}
+function extractPdfPageText(content,lineTolerance=2){
+  const rows=[];
+  (content.items||[]).forEach(item=>{
+    const text=normalizePdfItemText(item.str);
+    if(text==null) return;
+    const tr=item.transform||[1,0,0,1,0,0];
+    rows.push({text,x:tr[4]||0,y:Math.round((tr[5]||0)*2)/2,width:Number(item.width)||0,height:Number(item.height)||Math.abs(tr[3])||0});
+  });
+  rows.sort((a,b)=>b.y-a.y || a.x-b.x);
+  const lines=[];
+  rows.forEach(item=>{
+    let line=lines.find(l=>Math.abs(l.y-item.y)<=lineTolerance);
+    if(!line){line={y:item.y,items:[]}; lines.push(line)}
+    line.items.push(item);
+  });
+  return lines.map(line=>renderPdfLine(line.items)).filter(Boolean).join('\n');
+}
+function normalizePdfItemText(value){
+  const raw=String(value??'');
+  if(!raw) return null;
+  if(/^\s+$/.test(raw)) return ' ';
+  const cleaned=raw.replace(/[\u0000-\u001f\u007f]/g,'');
+  return cleaned?cleaned:null;
+}
+function renderPdfLine(items){
+  const sorted=items.slice().sort((a,b)=>a.x-b.x);
+  let out='', previous=null;
+  sorted.forEach(item=>{
+    if(previous && item.text!==' ' && previous.text!==' '){
+      const gap=item.x-(previous.x+previous.width);
+      const fontSize=Math.max(5,item.height||0,previous.height||0);
+      if(gap>Math.max(1.5,fontSize*.22)) out+=' ';
+    }
+    out+=item.text;
+    previous=item;
+  });
+  return out.replace(/\s+/g,' ').trim();
+}
+function extractPdfPageVariants(content){
+  const raw=(content.items||[]).map(x=>String(x.str||'').trim()).filter(Boolean);
+  const lineas=extractPdfPageText(content,2);
+  const lineasFlexibles=extractPdfPageText(content,6);
+  const columnas=extractPdfPageColumns(content,2);
+  return {
+    // Las páginas que empiezan una semana usan dos columnas; la página
+    // siguiente de Nuestra Vida Cristiana usa una sola. Esta combinación
+    // evita cortar títulos y duraciones justo por la mitad.
+    hibrido:findWeekMarker(sanitizeMwbPdfText(lineas))?columnas:lineas,
+    lineas,
+    lineasFlexibles,
+    columnas,
+    ordenPdf:raw.join('\n'),
+    flujoPdf:raw.join(' ')
+  };
+}
+function extractPdfPageColumns(content,lineTolerance=2){
+  const items=(content.items||[]).map(item=>{
+    const text=normalizePdfItemText(item.str);
+    const tr=item.transform||[1,0,0,1,0,0];
+    return text!=null?{text,x:tr[4]||0,y:Math.round((tr[5]||0)*2)/2,width:Number(item.width)||0,height:Number(item.height)||Math.abs(tr[3])||0}:null;
+  }).filter(Boolean);
+  if(!items.length) return '';
+  const minX=Math.min(...items.map(x=>x.x)), maxX=Math.max(...items.map(x=>x.x));
+  const split=minX+(maxX-minX)/2;
+  const left=items.filter(x=>x.x<=split), right=items.filter(x=>x.x>split);
+  const render=(list,skipDateLines=false)=>{
+    const lines=[];
+    list.sort((a,b)=>b.y-a.y || a.x-b.x).forEach(item=>{
+      let line=lines.find(l=>Math.abs(l.y-item.y)<=lineTolerance);
+      if(!line){line={y:item.y,items:[]}; lines.push(line)}
+      line.items.push(item);
+    });
+    return lines.map(line=>renderPdfLine(line.items)).filter(line=>line && !(skipDateLines && /^\s*\d{1,2}\s*(?:-|de\b|a\b|al\b)/i.test(sanitizeMwbPdfText(line)))).join('\n');
+  };
+  // Los encabezados de semana ocupan todo el ancho. Si se dividen como si
+  // fueran dos columnas, se pierde el último dígito de la lectura (p. ej. 37).
+  const fullWidthLines=[];
+  items.slice().sort((a,b)=>b.y-a.y || a.x-b.x).forEach(item=>{
+    let line=fullWidthLines.find(l=>Math.abs(l.y-item.y)<=lineTolerance);
+    if(!line){line={y:item.y,items:[]}; fullWidthLines.push(line)}
+    line.items.push(item);
+  });
+  const headers=fullWidthLines.map(line=>renderPdfLine(line.items)).filter(line=>/^\s*\d{1,2}\s*(?:-|de\b|a\b|al\b)/i.test(sanitizeMwbPdfText(line)));
+  return [headers.join('\n'),render(left,true),render(right,true)].filter(Boolean).join('\n');
+}
+function chooseBestPdfCandidate(pageVariants,year,source){
+  const labels=['hibrido','lineas','lineasFlexibles','columnas','ordenPdf','flujoPdf'];
+  const candidates=labels.map(label=>{
+    const pages=pageVariants.map(v=>v[label]||'');
+    const weeks=parseWeeksFromPages(pages,year,source);
+    const text=pages.join('\n\n');
+    const partMarkers=(text.match(/(?:^|\n)\s*\d{1,2}\.\s+/g)||[]).length;
+    const weekMarkers=(text.match(weekMarkerRegex('gi'))||[]).length;
+    const score=weeks.length*1000+weeks.reduce((sum,w)=>sum+(w.parts?.length||0),0)*20+weekMarkers*10+partMarkers;
+    return {label,pages,weeks,score};
+  });
+  candidates.sort((a,b)=>b.score-a.score || b.pages.join('').length-a.pages.join('').length);
+  return candidates[0]||{label:'sin lectura',pages:[],weeks:[],score:0};
+}
+async function openPdfDocument(lib,buf){
+  if(lib.GlobalWorkerOptions) lib.GlobalWorkerOptions.workerSrc='/static/gestion/pdf.worker.mjs';
+  return await lib.getDocument({data:buf.slice(0)}).promise;
+}
+function importText(){
+  const text=document.getElementById('programText').value.trim(); if(!text){toast('Pegá el texto primero');return}
+  const weeks=parseWeeksFromText(text, Number(document.getElementById('pasteYear').value)||new Date().getFullYear(), 'texto pegado');
+  if(!weeks.length){toast('No se detectaron semanas');return}
+  mergeWeeks(weeks); toast(`${weeks.length} semana/s importadas`);
+}
+function mergeWeeks(weeks){
+  const valid=weeks.filter(w=>w && Array.isArray(w.parts) && w.parts.length);
+  valid.forEach(w=>{normalizeWeek(w); state.weeks=state.weeks.filter(x=>x.start!==w.start); state.weeks.push(w)});
+  state.weeks.sort((a,b)=>parseISO(a.start)-parseISO(b.start)); saveState(); act(`${valid.length} semana/s importadas/actualizadas`); const first=valid[0]; if(first) viewDate=parseISO(first.start); renderProgram();
+}
+function parseWeeksFromPages(pages,year,source){
+  const joined=pages.map(cleanText).join('\n\n');
+  const fromJoined=parseWeeksFromText(joined,year,source);
+  if(fromJoined.length) return fromJoined;
+  const weeks=[];
+  for(let i=0;i<pages.length;i++){
+    const page=cleanText(pages[i]); const m=findWeekMarker(page);
+    if(!m) continue;
+    let block=page;
+    for(let j=i+1;j<pages.length;j++){if(findWeekMarker(cleanText(pages[j]))) break; block+='\n'+cleanText(pages[j]);}
+    const w=parseWeekBlock(block,year,source); if(w) weeks.push(w);
+  }
+  return dedupeWeeks(weeks);
+}
+function parseWeeksFromText(text,year,source){
+  text=cleanText(text);
+  const rawMarkers=[...text.matchAll(weekMarkerRegex('gi'))];
+  const markers=rawMarkers.filter((m,idx)=>isUsefulWeekMarker(text,m,rawMarkers[idx+1]));
+  if(!markers.length) return [];
+  return markers.map((m,idx)=>{
+    const start=m.index; const end=idx<markers.length-1?markers[idx+1].index:text.length;
+    return parseWeekBlock(text.slice(start,end),year,source);
+  }).filter(Boolean);
+}
+function isUsefulWeekMarker(text,marker,nextMarker){
+  const end=nextMarker?nextMarker.index:text.length;
+  const probe=text.slice(marker.index,Math.min(end,marker.index+3000));
+  const hasMeetingSection=/TESOROS\s+DE\s+LA\s+BIBLIA|SEAMOS\s+MEJORES\s+MAESTROS|NUESTRA\s+VIDA\s+CRISTIANA/i.test(probe);
+  const hasTimedPart=/(?:^|\n)\s*\d{1,2}\.\s+[\s\S]{0,220}\(\d+\s*(?:mins?\.?|minutos?)\s*\)/i.test(probe);
+  const hasSong=/Canci[oÃ³]n\s+\d+\s+y\s+oraci[oÃ³]n/i.test(probe);
+  return hasMeetingSection || (hasSong && hasTimedPart);
+}
+function cleanText(t){return sanitizeMwbPdfText(t).replace(/[\u0000-\u001f]/g,'\n').replace(/[\u2010-\u2015]/g,'-').replace(/[ \t]+/g,' ').replace(/\n{2,}/g,'\n').replace(/ -/g,'-').trim()}
+function sanitizeMwbPdfText(value){
+  let t=String(value||'');
+  t=t.replace(/HYPERLINK\s+"[^"]*"/gi,' ');
+  t=t.replace(/https?:\/\/\S+/gi,' ');
+  t=stripMwbReferenceNoise(t);
+  t=t.replace(/\/(?:CR|EM|Span|P|Link|Figure|Artifact|Sect)\b/gi,' ');
+  t=t.replace(/\(cid:\d+\)/g,' ');
+  t=t.replace(/\/[A-Z]{2,}/g,' ');
+  t=t.replace(/[\u00b4`]/g,'').replace(/\u0131/g,'i').replace(/\u02dc/g,'');
+  t=t.replace(/[´`]/g,'').replace(/ı/g,'i').replace(/˜/g,'');
+  t=t.replace(/([A-Za-zÁÉÍÓÚÜÑáéíóúüñ])- +([a-záéíóúüñ])/g,'$1$2');
+  ['enero','febrero','marzo','abril','mayo','junio','julio','agosto','septiembre','setiembre','octubre','noviembre','diciembre','jeremias','isaias','ezequiel','salmos','proverbios','tesoros','biblia','seamos','mejores','maestros','nuestra','vida','cristiana','cancion','oracion','introduccion','conclusion','lectura','congregacion'].forEach(word=>{
+    const pattern=word.split('').map(ch=>ch.replace(/[.*+?^${}()|[\]\\]/g,'\\$&')).join('\\s*');
+    t=t.replace(new RegExp(pattern,'gi'),word.toUpperCase());
+  });
+  for(let i=0;i<4;i++) t=t.replace(/\b(\d)\s+(\d)\b/g,'$1$2');
+  const months='ENERO|FEBRERO|MARZO|ABRIL|MAYO|JUNIO|JULIO|AGOSTO|SEPTIEMBRE|SETIEMBRE|OCTUBRE|NOVIEMBRE|DICIEMBRE';
+  t=t.replace(new RegExp(`\\bD\\s*E\\s+(${months})`,'gi'),'DE $1');
+  t=t.replace(new RegExp(`(\\d{1,2})\\s+DE\\s+(${months})\\s+A\\s+(\\d{1,2})\\s+DE\\s+(${months})`,'gi'),(_,startDay,startMonth,endDay,endMonth)=>{
+    // Solo abrevia cuando ambos días pertenecen al mismo mes. En los cruces
+    // de mes se deben conservar los dos nombres para no cambiar la fecha final.
+    return normalizePlainText(startMonth)===normalizePlainText(endMonth)
+      ?`${startDay}-${endDay} DE ${startMonth}`
+      :`${startDay} DE ${startMonth} A ${endDay} DE ${endMonth}`;
+  });
+  t=t.replace(new RegExp(`(\\d{1,2})\\s*-\\s*(\\d{1,2})\\s+DE\\s+(${months})`,'gi'),'$1-$2 DE $3');
+  return t;
+}
+function stripMwbReferenceNoise(value){
+  let t=String(value||'');
+  const blocks=[
+    ['Texto insertado','Fin de texto insertado'],
+    ['Informaci[oóÃ³]n de la imagen','Fin de informaci[oóÃ³]n de la imagen'],
+    ['Referencia insertada','Fin de referencia insertada']
+  ];
+  blocks.forEach(([start,end])=>{
+    t=t.replace(new RegExp(`\\[${start}\\.?\\][\\s\\S]*?\\[${end}\\.?\\]`,'gi'),' ');
+  });
+  t=t.replace(/\[(?:Fin de )?(?:texto insertado|referencia insertada|informaci[oóÃ³]n de la imagen)\.?\]/gi,' ');
+  return t;
+}
+function weekMarkerRegex(flags='i'){
+  const months='enero|febrero|marzo|abril|mayo|junio|julio|agosto|septiembre|setiembre|octubre|noviembre|diciembre';
+  // Admite los tres encabezados usados por la guía:
+  // "4-10 de mayo", "4 a 10 de mayo" y "29 de junio a 5 de julio".
+  return new RegExp(`(\\d{1,2})\\s*(?:-\\s*(\\d{1,2})\\s+de\\s+(${months})|(?:de\\s+(${months})\\s+)?(?:a|al)\\s*(\\d{1,2})\\s+de\\s+(${months}))\\s*([^\\n]{0,120})?`,flags);
+}
+function monthIndexFromName(name){
+  const key=normalizePlainText(name||'').toUpperCase();
+  const aliases={SETIEMBRE:8,SEPTIEMBRE:8};
+  return key in aliases?aliases[key]:MONTHS_UP[key];
+}
+function findWeekMarker(t){return t.match(weekMarkerRegex('i'))}
+function parseWeekBlock(block,year,source){
+  const m=findWeekMarker(block); if(!m) return null;
+  const startDay=Number(m[1]);
+  const endDay=Number(m[5]||m[2]);
+  const startMonthName=m[4]||m[3]||m[6];
+  const endMonthName=m[6]||m[3]||startMonthName;
+  const sm=monthIndexFromName(startMonthName), em=monthIndexFromName(endMonthName);
+  if(sm==null || em==null || !startDay || !endDay) return null;
+  const start=new Date(year,sm,startDay);
+  let endYear=year;
+  if(em<sm) endYear++;
+  const end=new Date(endYear,em,endDay);
+  const lectura=(m[7]||'').split('\n')[0].replace(/Canci[oó]n.*/i,'').replace(/^\s*[|·:]\s*/,'').replace(/\s+\d{1,2}\s*$/,'').replace(/^\s*\((.*?)\)\s*$/,'$1').trim();
+  const parts=[];
+  // No convertir cualquier "7." del texto en un número de parte: las citas
+  // bíblicas y los párrafos también contienen números seguidos de punto.
+  // Las variantes de extracción ya conservan o crean saltos por elemento PDF.
+  const blockParts=block;
+  const matches=[...blockParts.matchAll(/(?:^|\n)\s*(\d{1,2})\.\s+([\s\S]*?)(?=\n\s*\d{1,2}\.\s+|$)/g)];
+  matches.forEach(mm=>{
+    const detectedNum=Number(mm[1]); let raw=mm[2].replace(/\n/g,' ').replace(/\s+/g,' ').trim();
+    if(!raw || raw.length<3) return;
+    const time=((raw.match(/\((\d+)\s*(?:mins?\.?|minutos?)\s*\)/i)||[])[0]||'').replace(/\s+\)/,')');
+    if(!time) return;
+    const num=normalizeImportedPartNumber(detectedNum,parts);
+    if(!num) return;
+    const titleSource=(raw.split(/\(\d+\s*(?:mins?\.?|minutos?)\s*\)/i)[0]||raw).trim();
+    let title=titleSource.split(/(?:DE CASA|PREDICACIÓN|Análisis|Escenificación|lff|lfb|Is |Jer |Ponga|Lea)/)[0].trim();
+    if(title.length>90) title=title.slice(0,90).replace(/\s+\S*$/,'')+'…';
+    title=title.replace(/\(\d+\s*(?:mins?\.?|minutos?)\s*\)/i,'').trim();
+    let section=detectImportedPartSection(blockParts,mm.index,num);
+    if(num>=7 && looksLikeNvcImportedPart({title,detail:raw})) section='nvc';
+    const priv= num===1?'tesoros':num===2?'perlas':num===3?'lector_biblia':section==='smm'?'smm':raw.toLowerCase().includes('estudio bíblico')?'conductor_ebc':'nvc';
+    const detail=compactProgramDetail(raw,title,time);
+    const imported={id:'part-'+num+'-'+Date.now()+Math.random().toString(36).slice(2,6),num,section,title:title||`Parte ${num}`,time,detail,privReq:priv,helperAllowed:defaultHelperAllowed({section,num,title,detail:raw}),assignedId:null,helperId:null,readerId:null,done:false,attendance:'pendiente',notes:''};
+    repairImportedTypography(imported);
+    parts.push(imported);
+  });
+  const songs=extractMeetingSongs(block);
+  return {id:'wk-'+iso(start),start:iso(start),end:iso(end),lectura,openingSong:songs.openingSong,nvcSong:songs.nvcSong,closingSong:songs.closingSong,openingPrayerId:null,presidentId:null,closingPrayerId:null,source,parts:parts.length?parts:[]};
+}
+function extractMeetingSongs(block){
+  const matches=[...String(block||'').matchAll(/Canci[oó]n\s+(\d+)/gi)].map(m=>({number:m[1],index:m.index}));
+  if(!matches.length) return {openingSong:'',nvcSong:'',closingSong:''};
+  const nvcHeader=lastIndexOfRegex(String(block||''),/NUESTRA\s+VIDA\s+CRISTIANA/gi);
+  const conclusion=lastIndexOfRegex(String(block||''),/Palabras\s+de\s+conclusi[oó]n/gi);
+  const openingSong=matches[0].number;
+  const closingMatch=conclusion>=0?matches.find(m=>m.index>conclusion):matches[matches.length-1];
+  const nvcMatch=nvcHeader>=0?matches.find(m=>m.index>nvcHeader && (!closingMatch || m.index<closingMatch.index)):null;
+  return {
+    openingSong,
+    nvcSong:nvcMatch?.number||(matches.length>=3?matches[matches.length-2].number:''),
+    closingSong:closingMatch?.number||(matches.length>=2?matches[matches.length-1].number:'')
+  };
+}
+function normalizeImportedPartNumber(detectedNum,parts){
+  const last=Math.max(0,...parts.map(p=>Number(p.num)||0));
+  const expected=last+1;
+  if(detectedNum===expected) return detectedNum;
+  if(detectedNum>12 && expected>=1 && expected<=12) return expected;
+  if(detectedNum>0 && detectedNum<=12 && detectedNum>last) return detectedNum;
+  return null;
+}
+function detectImportedPartSection(text,index,num){
+  const before=text.slice(0,index);
+  const headers=[
+    {section:'tesoros',index:lastIndexOfRegex(before,/Tesoros\s+de\s+la\s+Biblia/gi)},
+    {section:'smm',index:lastIndexOfRegex(before,/Seamos\s+mejores\s+maestros/gi)},
+    {section:'nvc',index:lastIndexOfRegex(before,/Nuestra\s+Vida\s+Cris\s*tiana/gi)}
+  ].filter(x=>x.index>=0).sort((a,b)=>b.index-a.index);
+  if(headers[0]) return headers[0].section;
+  return num<=3?'tesoros':(num<=6?'smm':'nvc');
+}
+function lastIndexOfRegex(text,regex){
+  let last=-1, match;
+  while((match=regex.exec(text))!==null) last=match.index;
+  return last;
+}
+function dedupeWeeks(arr){const map={}; arr.forEach(w=>map[w.start]=w); return Object.values(map)}
+function renderReports(){
+  const rows=allAssignments();
+  const counts=state.students.map(s=>({s,count:countAssignmentsTotal(s.id)})).sort((a,b)=>b.count-a.count);
+  const max=Math.max(1,...counts.map(x=>x.count));
+  document.getElementById('reportParticipation').innerHTML=counts.length?counts.map(({s,count})=>`<div style="margin-bottom:11px"><div style="display:flex;justify-content:space-between;font-size:12px"><b>${s.last}, ${s.name}</b><span>${count}</span></div><div class="progress"><span style="width:${(count/max)*100}%"></span></div></div>`).join(''):'<div class="empty-state">Sin estudiantes.</div>';
+  const sec={tesoros:0,smm:0,nvc:0,apertura:0,cierre:0}; rows.forEach(r=>{if(r.part.assignedId)sec[r.part.section]=(sec[r.part.section]||0)+1});
+  document.getElementById('reportSections').innerHTML=Object.entries(sec).filter(x=>x[1]).map(([k,v])=>`<div style="display:flex;justify-content:space-between;border-bottom:1px solid var(--line);padding:9px 0"><span class="badge ${partBadge(k)}">${sectionLabel(k)}</span><b>${v}</b></div>`).join('')||'<div class="empty-state">Sin asignaciones.</div>';
+  document.getElementById('assignmentBody').innerHTML=rows.map(({week,part})=>`<tr><td>${weekLabel(week)}</td><td>${part.num}. ${escapeHTML(part.title)}</td><td><span class="badge ${partBadge(part.section)}">${sectionLabel(part.section)}</span></td><td>${part.assignedId?studentName(part.assignedId):'—'}</td><td>${part.readerId?studentName(part.readerId):'—'}</td><td>${part.helperId?studentName(part.helperId):'—'}</td><td><span class="badge ${part.done?'b-ok':'b-warn'}">${part.done?'Completada':'Pendiente'}</span></td></tr>`).join('');
+}
+function renderConfig(){
+  document.getElementById('cfgCong').value=state.config.congregation||'';
+  document.getElementById('cfgCity').value=state.config.city||'';
+  document.getElementById('cfgDay').value=state.config.meetingDay;
+  document.getElementById('cfgTime').value=state.config.time||'19:00';
+  document.getElementById('cfgMinWeeks').value=state.config.minWeeks??3;
+  document.getElementById('cfgMaxMonth').value=state.config.maxMonth??2;
+  document.getElementById('cfgAux').value=state.config.auxRoom?1:0;
+  document.getElementById('cfgHelpers').value=state.config.autoHelpers?1:0;
+  document.getElementById('cfgUser').value=state.auth.user;
+  document.getElementById('cfgPass').value='';
+}
+function saveConfig(){
+  Object.assign(state.config,{congregation:document.getElementById('cfgCong').value.trim(),city:document.getElementById('cfgCity').value.trim(),meetingDay:Number(document.getElementById('cfgDay').value),time:document.getElementById('cfgTime').value,minWeeks:Number(document.getElementById('cfgMinWeeks').value),maxMonth:Number(document.getElementById('cfgMaxMonth').value),auxRoom:Number(document.getElementById('cfgAux').value),autoHelpers:Number(document.getElementById('cfgHelpers').value)});
+  saveState(); toast('Configuración guardada');
+}
+function saveCredentials(){
+  const u=document.getElementById('cfgUser').value.trim(), p=document.getElementById('cfgPass').value;
+  if(!u){toast('El usuario no puede estar vacío');return}
+  fetch('/api/credentials/',{method:'POST',headers:{'Content-Type':'application/json','X-CSRFToken':csrfToken()},body:JSON.stringify({username:u,password:p})}).then(r=>r.json().then(data=>({ok:r.ok,data}))).then(({ok,data})=>{if(!ok)throw new Error(data.error||'No se pudo actualizar');state.auth.user=u;toast('Acceso actualizado')}).catch(e=>toast(e.message));
+}
+function backupJSON(){
+  const blob=new Blob([JSON.stringify(state,null,2)],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='respaldo_vym_'+new Date().toISOString().slice(0,10)+'.json'; a.click(); URL.revokeObjectURL(a.href);
+}
+function backupCurrentMonth(){
+  const weeks=monthWeeks();
+  if(!weeks.length){toast('No hay programa cargado en este mes');return}
+  const ids=new Set();
+  weeks.forEach(w=>{[w.openingPrayerId,w.presidentId,w.closingPrayerId].forEach(id=>id&&ids.add(id)); w.parts.forEach(p=>[p.assignedId,p.helperId,p.readerId].forEach(id=>id&&ids.add(id))) });
+  const data={type:'vym_month_backup',version:2,createdAt:new Date().toISOString(),month:visibleMonth(),year:visibleYear(),label:`${MONTHS[visibleMonth()]} ${visibleYear()}`,config:clone(state.config),weeks:clone(weeks),students:state.students.filter(s=>ids.has(s.id))};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`backup_programa_${visibleYear()}_${String(visibleMonth()+1).padStart(2,'0')}.json`; a.click(); URL.revokeObjectURL(a.href);
+  toast('Backup mensual descargado');
+}
+function restoreMonthBackup(input){
+  const file=input.files[0]; if(!file) return;
+  const r=new FileReader();
+  r.onload=()=>{try{
+    const data=JSON.parse(r.result);
+    if(data.type!=='vym_month_backup' || !Array.isArray(data.weeks)){toast('El archivo no es un backup mensual válido'); input.value=''; return}
+    const label=data.label || `${MONTHS[data.month]} ${data.year}`;
+    if(!confirm(`¿Recuperar el programa de ${label}? Esto reemplazará las semanas de ese mes que ya estén cargadas.`)){input.value=''; return}
+    if(Array.isArray(data.students)){
+      data.students.forEach(st=>{if(st && st.id && !state.students.some(s=>s.id===st.id)) state.students.push(st)});
+    }
+    const m=Number(data.month), y=Number(data.year);
+    state.weeks=state.weeks.filter(w=>{const d=parseISO(w.start); return !(d.getMonth()===m && d.getFullYear()===y)});
+    data.weeks.forEach(w=>{normalizeWeek(w); state.weeks.push(w)});
+    state.weeks.sort((a,b)=>parseISO(a.start)-parseISO(b.start));
+    saveState(); act(`Programa mensual recuperado: ${label}`); viewDate=new Date(y,m,1); renderAll(); showPage('programa'); toast('Programa mensual recuperado');
+  }catch(e){console.error(e); toast('No se pudo recuperar: JSON inválido')} finally {input.value=''}};
+  r.readAsText(file);
+}
+function restoreJSON(input){
+  const file=input.files[0]; if(!file)return; const r=new FileReader(); r.onload=()=>{try{state=JSON.parse(r.result); saveState(); renderAll(); toast('Respaldo importado')}catch(e){toast('JSON inválido')}}; r.readAsText(file);
+}
+function exportReportCSV(){
+  const rows=[['Semana','Fecha reunión','Sección','Nro','Parte','Asignado','Lector EBC','Ayudante','Estado']];
+  allAssignments().forEach(({week,part})=>rows.push([weekLabel(week),fmtDate(getMeetingDate(week)),sectionLabel(part.section),part.num,part.title,studentName(part.assignedId)||'',studentName(part.readerId)||'',studentName(part.helperId)||'',part.done?'Completada':'Pendiente']));
+  const csv=rows.map(r=>r.map(c=>`"${String(c).replace(/"/g,'""')}"`).join(',')).join('\n');
+  const blob=new Blob([csv],{type:'text/csv;charset=utf-8'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='reporte_asignaciones.csv'; a.click();
+}
+function modelMonthTitle(){
+  const abbr=['Ene.','Feb.','Mar.','Abr.','May.','Jun.','Jul.','Ago.','Sept.','Oct.','Nov.','Dic.'];
+  return `${abbr[visibleMonth()]} de ${visibleYear()}`;
+}
+function weekLabelModel(w){
+  const custom=(w.customWeekLabel||'').trim();
+  if(custom) return custom;
+  const s=parseISO(w.start), e=parseISO(w.end);
+  const startMonth=MONTHS[s.getMonth()];
+  const endMonth=MONTHS[e.getMonth()];
+  if(s.getMonth()===e.getMonth() && s.getFullYear()===e.getFullYear()){
+    return `${s.getDate()}-${e.getDate()} de ${startMonth}`;
+  }
+  return `${s.getDate()} de ${startMonth} al ${e.getDate()} de ${endMonth}`;
+}
+function printablePerson(id){
+  return escapeHTML(studentName(id)||'');
+}
+function printPartRow(p){
+  const assigned=printablePerson(p.assignedId)||'<span class="model-blank">________________</span>';
+  const detail=partDisplayDetail(p);
+  const title=`${p.num}. ${escapeHTML(p.title)} <small>${escapeHTML(p.time||'')}</small>${detail?` <small>${escapeHTML(detail)}</small>`:''}`;
+  const reader=isEbcPart(p)?`<div class="model-helper"><div class="model-helper-label">Lector:</div><div class="model-helper-name">${printablePerson(p.readerId)||'<span class="model-blank">____________</span>'}</div></div>`:'';
+  const helper=p.helperAllowed?`<div class="model-helper"><div class="model-helper-label">Ayudante:</div><div class="model-helper-name">${printablePerson(p.helperId)||'<span class="model-blank">____________</span>'}</div></div>`:'';
+  return `<div class="model-row"><div class="model-topic">${title}</div><div class="model-name">${assigned}</div></div>${reader}${helper}`;
+}
+function renderModelWeek(w){
+  if(isNoAssignmentWeek(w)){
+    return `<div class="model-week">
+      <div class="model-week-top"><div class="model-week-title">SEMANA ${weekLabelModel(w)}</div><div class="model-reading"><b>Evento especial</b></div></div>
+      <div class="model-special">${escapeHTML(specialEventPdfLabel(w)||SPECIAL_EVENTS[w.specialEventType]||'Evento especial')}</div>
+      <div class="model-opening"><div>No hay programa regular Vida y Ministerio ni asignaciones para esta semana.</div></div>
+    </div>`;
+  }
+  const tes=w.parts.filter(p=>p.section==='tesoros').map(printPartRow).join('');
+  const smm=w.parts.filter(p=>p.section==='smm').map(printPartRow).join('');
+  const nvc=w.parts.filter(p=>p.section==='nvc').map(printPartRow).join('');
+  return `<div class="model-week">
+    <div class="model-week-top"><div class="model-week-title">SEMANA ${weekLabelModel(w)}</div><div class="model-reading"><b>Lectura sem:</b> ${escapeHTML(w.lectura||'')}</div></div>
+    ${specialEventPdfLabel(w)?`<div class="model-special">${escapeHTML(specialEventPdfLabel(w))}</div>`:''}
+    <div class="model-opening"><div>● Canción ${escapeHTML(w.openingSong||'—')} y oración:<span class="role-line">${printablePerson(w.openingPrayerId)}</span></div><div>● Palabras de introd. (1 min):<span class="role-line">${printablePerson(w.presidentId)}</span></div></div>
+    <div class="model-bar bar-tesoros">TESOROS DE LA BIBLIA</div>${tes}
+    <div class="model-bar bar-smm">SEAMOS MEJORES MAESTROS</div>${smm}
+    <div class="model-bar bar-nvc">NUESTRA VIDA CRISTIANA</div>
+    <div class="model-song">● Canción ${escapeHTML(w.nvcSong||'—')}</div>${nvc}
+    <div class="model-footer"><div>● Palabras de conclusión <span class="model-muted">(3 min)</span></div><div>● Canción ${escapeHTML(w.closingSong||'—')} y oración:<span class="role-line">${printablePerson(w.closingPrayerId)}</span></div></div>
+  </div>`;
+}
+
+function backupStudentsJSON(){
+  const data={type:'vym_students_backup',version:1,createdAt:new Date().toISOString(),students:clone(state.students)};
+  const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download=`backup_estudiantes_${new Date().toISOString().slice(0,10)}.json`; a.click(); URL.revokeObjectURL(a.href);
+  toast('Backup de estudiantes descargado');
+}
+function restoreStudentsJSON(input){
+  const file=input.files[0]; if(!file) return;
+  const reader=new FileReader();
+  reader.onload=e=>{
+    try{
+      const data=JSON.parse(e.target.result);
+      const students=Array.isArray(data.students)?data.students:(Array.isArray(data)?data:null);
+      if(!students){toast('El archivo no contiene estudiantes'); input.value=''; return}
+      if(!confirm('Esto reemplazará la lista actual de estudiantes. ¿Continuar?')){input.value=''; return}
+      state.students=students.map(s=>({id:s.id||('st-'+Date.now()+Math.random().toString(36).slice(2,5)),name:s.name||s.nombre||'',last:s.last||s.apellido||'',sex:s.sex||s.sexo||'M',status:s.status||s.estado||'activo',privileges:s.privileges||s.privilegios||[],notes:s.notes||s.notas||''}));
+      saveState(); act('Backup de estudiantes recuperado'); renderStudents(); renderPanel(); renderProgram(); toast('Estudiantes recuperados');
+    }catch(err){toast('No se pudo recuperar estudiantes: JSON inválido')}
+    input.value='';
+  };
+  reader.readAsText(file);
+}
+function s89EligibleParts(w){
+  if(isNoAssignmentWeek(w)) return [];
+  return w.parts.filter(p=>!isWhatWouldYouSayPart(p) && (p.privReq==='lector_biblia'||p.section==='smm') && p.assignedId).sort((a,b)=>Number(a.num)-Number(b.num));
+}
+function openS89Week(weekId){
+  const w=state.weeks.find(x=>x.id===weekId); if(!w) return;
+  const parts=s89EligibleParts(w);
+  document.getElementById('s89Title').textContent=`Hojas S-89 · ${weekDisplayLabel(w)}`;
+  if(!parts.length){
+    document.getElementById('s89Content').innerHTML='<div class="empty-state"><b>No hay estudiantes asignados para S-89</b><span>Asigná primero la lectura de la Biblia o las partes de Seamos mejores maestros.</span></div>';
+  }else{
+    document.getElementById('s89Content').innerHTML=`<div class="toolbar" style="margin-bottom:14px"><button class="btn btn-primary" onclick="printS89Week('${weekId}')">Imprimir todas separadas</button></div><div class="s89-list">${parts.map(p=>`<div class="s89-item"><div><b>${escapeHTML(studentName(p.assignedId))}</b><span>${p.num}. ${escapeHTML(p.title)} ${p.time?`· ${escapeHTML(p.time)}`:''}${p.helperId?` · Ayudante: ${escapeHTML(studentName(p.helperId))}`:''}</span></div><button class="btn btn-sec btn-sm" onclick="printS89One('${weekId}','${p.id}')">PDF individual</button></div>`).join('')}</div>`;
+  }
+  openModal('s89Modal');
+}
+function s89PageHTML(w,p){
+  const detail=[`${p.num}. ${escapeHTML(p.title)}${p.time?` (${escapeHTML(p.time)})`:''}`, p.detail?escapeHTML(p.detail):''].filter(Boolean).join('<br>');
+  return `<div class="s89-page"><div class="s89-card">
+    <h2 class="s89-title">ASIGNACIÓN PARA LA REUNIÓN<br>VIDA Y MINISTERIO CRISTIANOS</h2>
+    <div class="s89-field"><b>Nombre:</b><div class="s89-value">${escapeHTML(studentName(p.assignedId)||'')}</div></div>
+    <div class="s89-field"><b>Ayudante:</b><div class="s89-value">${escapeHTML(studentName(p.helperId)||'')}</div></div>
+    <div class="s89-field"><b>Fecha:</b><div class="s89-value">${escapeHTML(weekDateForForms(w))}</div></div>
+    <div class="s89-inter"><b>Intervención núm.:</b><div class="s89-inter-text">${detail}</div></div>
+    <div class="s89-check-title">Se presentará en:</div>
+    <div class="s89-check"><span class="s89-box">✓</span><span>Sala principal</span></div>
+    <div class="s89-check"><span class="s89-box"></span><span>Sala auxiliar núm. 1</span></div>
+    <div class="s89-check"><span class="s89-box"></span><span>Sala auxiliar núm. 2</span></div>
+    <p class="s89-note"><b>Nota al estudiante:</b> En la <i>Guía de actividades</i> encontrará la información que necesita para su intervención. Repase también las indicaciones que se describen en las <i>Instrucciones para la reunión Vida y Ministerio Cristianos</i>.</p>
+    <div class="s89-code">S-89-S 11/23 · Generado localmente</div>
+  </div></div>`;
+}
+function printS89Week(weekId){
+  const w=state.weeks.find(x=>x.id===weekId); if(!w) return;
+  const parts=s89EligibleParts(w); if(!parts.length){toast('No hay hojas S-89 para imprimir'); return}
+  document.getElementById('printArea').innerHTML=parts.map(p=>s89PageHTML(w,p)).join('');
+  printPrepared('S-89');
+}
+function printS89One(weekId,partId){
+  const w=state.weeks.find(x=>x.id===weekId); if(!w) return;
+  const p=w.parts.find(x=>x.id===partId); if(!p){toast('No se encontró la asignación'); return}
+  document.getElementById('printArea').innerHTML=s89PageHTML(w,p);
+  printPrepared(`S-89 ${studentName(p.assignedId)||''}`);
+}
+function printPrepared(title=''){
+  const oldTitle=document.title; document.title=title;
+  const restore=()=>{document.title=oldTitle; window.removeEventListener('afterprint',restore)};
+  window.addEventListener('afterprint',restore);
+  setTimeout(()=>window.print(),80);
+}
+
+function buildPrintMonthHTML(){
+  const weeks=monthWeeks(), cfg=state.config;
+  const pages=weeks.map(w=>[w]);
+  return pages.map(pageWeeks=>`<div class="program-page">
+    <div class="model-head"><h1>VIDA Y MINISTERIO CRISTIANOS</h1><div class="model-month">${modelMonthTitle()}</div><div class="model-cong">Congregación: <span>${escapeHTML(cfg.congregation||'')}</span></div><div class="model-brand-mini">Programa local</div></div>
+    <div class="model-spacer"></div>
+    ${pageWeeks.map(renderModelWeek).join('')}
+  </div>`).join('');
+}
+function renderPrintMonth(){
+  document.getElementById('printArea').innerHTML=buildPrintMonthHTML();
+}
+function printableCSS(){
+  const css=document.querySelector('style')?.textContent||'';
+  const media=css.match(/@media print\s*{([\s\S]*)}\s*$/);
+  return media?media[1]:'';
+}
+function previewMonth(){
+  if(!monthWeeks().length){toast('No hay programa cargado en este mes');return}
+  const frame=document.getElementById('previewFrame');
+  frame.srcdoc=`<!doctype html><html lang="es"><head><meta charset="UTF-8"><style>
+    ${printableCSS()}
+    html,body{background:#e5e7eb!important;margin:0!important;padding:14px!important}
+    .program-page{margin:0 auto 18px!important;box-shadow:0 14px 34px rgba(15,23,42,.18);break-after:auto!important;page-break-after:auto!important}
+  </style></head><body><div class="print-area">${buildPrintMonthHTML()}</div></body></html>`;
+  openModal('previewModal');
+}
+function printMonthClean(){
+  renderPrintMonth();
+  printPrepared('');
+}
+function openModal(id){document.getElementById(id).classList.add('open')}
+function closeModal(id){document.getElementById(id).classList.remove('open')}
+document.querySelectorAll('.modal-wrap').forEach(m=>m.addEventListener('click',e=>{if(e.target===m)m.classList.remove('open')}));
+function escapeHTML(str){return String(str??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#039;'}[m]))}
+window.addEventListener('load',()=>{
+  document.getElementById('login').style.display='none';document.getElementById('app').style.display='block';renderAll();
+});
+</script>
+</body>
+</html>

@@ -1,0 +1,13 @@
+.agents/
+.codex/
+*.pdf
+*.tmp
+*.bak
+.venv/
+__pycache__/
+*.pyc
+db.sqlite3
+data/respaldo_inicial.json
+data/*.pdf
+Thumbs.db
+desktop.ini
